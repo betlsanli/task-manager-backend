@@ -21,7 +21,7 @@ import java.util.List;
 public class Tasklist extends BaseEntity{
 
     @Column(nullable = false, length = 126)
-    private String name;
+    private String title;
 
     @Column(length = 512)
     private String description;
