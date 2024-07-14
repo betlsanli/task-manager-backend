@@ -17,11 +17,13 @@ import java.util.UUID;
 @Service
 public class TaskService {
 
-    @Autowired
-    private TaskRepository taskRepository;
+
+    private final TaskRepository taskRepository;
 
     @Autowired
-    private TasklistService tasklistService;
+    public TaskService(TaskRepository taskRepository) {
+        this.taskRepository = taskRepository;
+    }
 
     public List<Task> getAll() {
         return taskRepository.findAll();
@@ -31,13 +33,17 @@ public class TaskService {
         return taskRepository.findById(id);
     }
 
-    public List<Task> getAllByUser(AppUser user) {
-        List<Tasklist> tasklists = tasklistService.getAllByUser(user);
-        return taskRepository.findAllByBelongsToIn(tasklists);
-    }
+//    public List<Task> getAllByUser(AppUser user) {
+//        List<Tasklist> tasklists = tasklistService.getAllByUser(user);
+//        return taskRepository.findAllByBelongsToIn(tasklists);
+//    }
 
     public List<Task> getAllByTasklist(Tasklist tasklist) {
         return taskRepository.findAllByBelongsTo(tasklist);
+    }
+
+    public List<Task> getAllByTasklists(List<Tasklist> tasklists) {
+        return taskRepository.findAllByBelongsToIn(tasklists);
     }
 
     public List<Task> getAllByParentTask(Task parent) {

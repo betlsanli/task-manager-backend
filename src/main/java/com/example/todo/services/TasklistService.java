@@ -13,8 +13,13 @@ import java.util.UUID;
 
 @Service
 public class TasklistService {
+
+    private final TasklistRepository tasklistRepository;
+
     @Autowired
-    private TasklistRepository tasklistRepository;
+    public TasklistService(TasklistRepository tasklistRepository) {
+        this.tasklistRepository = tasklistRepository;
+    }
 
     public List<Tasklist> getAll() {
         return tasklistRepository.findAll();

@@ -13,8 +13,13 @@ import java.util.UUID;
 @Service
 public class AppUserService {
 
+
+    private final AppUserRepository appUserRepository;
+
     @Autowired
-    private AppUserRepository appUserRepository;
+    public AppUserService(AppUserRepository appUserRepository) {
+        this.appUserRepository = appUserRepository;
+    }
 
     public List<AppUser> getAll() {
         return appUserRepository.findAll();
