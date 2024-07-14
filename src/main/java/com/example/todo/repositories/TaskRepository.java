@@ -2,6 +2,7 @@ package com.example.todo.repositories;
 
 import com.example.todo.entities.Priority;
 import com.example.todo.entities.Task;
+import com.example.todo.entities.Tasklist;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
@@ -14,6 +15,10 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
     //List<Task> findByTitle(String title);
     List<Task> findAllByTitleContainingIgnoreCase(String title);
     List<Task> findAllByDescriptionContainingIgnoreCase(String description);
+
+    List<Task> findAllByBelongsTo(Tasklist tasklist);
+    List<Task> findAllByBelongsToIn(List<Tasklist> tasklists);
+    List<Task> findAllByParentTask(Task parenTask);
 
     Optional<Task> findById(UUID id);
 
