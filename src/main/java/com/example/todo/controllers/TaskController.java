@@ -1,5 +1,6 @@
 package com.example.todo.controllers;
 
+import com.example.todo.dto.request.create.TaskCreate;
 import com.example.todo.entities.AppUser;
 import com.example.todo.entities.Task;
 import com.example.todo.entities.Tasklist;
@@ -7,10 +8,7 @@ import com.example.todo.services.AppUserService;
 import com.example.todo.services.TaskService;
 import com.example.todo.services.TasklistService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -48,5 +46,15 @@ public class TaskController {
     @GetMapping("/{taskId}")
     public Task getTaskById(@PathVariable UUID taskId) {
         return taskService.getById(taskId);
+    }
+
+    @PostMapping("/create-task")
+    public Task createTask(@RequestBody TaskCreate taskCreate) {
+        return taskService.createTask(taskCreate);
+    }
+
+    @DeleteMapping("/delete/{taskId}")
+    public void deleteTask(@PathVariable UUID taskId) {
+        taskService.deleteById(taskId);
     }
 }

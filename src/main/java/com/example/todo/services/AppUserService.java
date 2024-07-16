@@ -1,5 +1,7 @@
 package com.example.todo.services;
 
+import com.example.todo.dto.request.create.AppUserCreate;
+import com.example.todo.dto.request.create.mappers.AppUserCreateMapper;
 import com.example.todo.entities.AppUser;
 import com.example.todo.repositories.AppUserRepository;
 import org.slf4j.Logger;
@@ -18,10 +20,12 @@ public class AppUserService {
 
     private final AppUserRepository appUserRepository;
     private static final Logger log = LoggerFactory.getLogger(AppUserService.class);
+    private final AppUserCreateMapper appUserCreateMapper;
 
     @Autowired
-    public AppUserService(AppUserRepository appUserRepository) {
+    public AppUserService(AppUserRepository appUserRepository, AppUserCreateMapper appUserCreateMapper) {
         this.appUserRepository = appUserRepository;
+        this.appUserCreateMapper = appUserCreateMapper;
     }
 
     public List<AppUser> getAll() {
@@ -36,10 +40,15 @@ public class AppUserService {
             return null;
         }
     }
+    public List<AppUser> getAllByIds(List<UUID> ids) {
+        return appUserRepository.findAllById(ids);
+    }
 
-    public AppUser save(AppUser appUser) {
-        appUser.setLastModifiedAt(LocalDateTime.now());
-        return appUserRepository.save(appUser);
+    public AppUser createUser(AppUserCreate newUser) {
+        if (newUser == null) {
+            return null;
+        }
+        return appUserRepository.save(appUserCreateMapper.toEntity(newUser));
     }
 
     public void deleteById(UUID id) {

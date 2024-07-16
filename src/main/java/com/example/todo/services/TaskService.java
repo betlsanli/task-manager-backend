@@ -1,5 +1,7 @@
 package com.example.todo.services;
 
+import com.example.todo.dto.request.create.TaskCreate;
+import com.example.todo.dto.request.create.mappers.TaskCreateMapper;
 import com.example.todo.entities.Task;
 import com.example.todo.entities.Tasklist;
 import com.example.todo.repositories.TaskRepository;
@@ -19,10 +21,14 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private static final Logger log = LoggerFactory.getLogger(TaskService.class);
+    private final TasklistService tasklistService;
+    private final TaskCreateMapper taskCreateMapper;
 
     @Autowired
-    public TaskService(TaskRepository taskRepository) {
+    public TaskService(TaskRepository taskRepository, TasklistService tasklistService, TaskCreateMapper taskCreateMapper) {
         this.taskRepository = taskRepository;
+        this.tasklistService = tasklistService;
+        this.taskCreateMapper = taskCreateMapper;
     }
 
     public List<Task> getAll() {
@@ -64,12 +70,20 @@ public class TaskService {
         return taskRepository.findAllByParentTask(parent);
     }
 
-    public Task save(Task newTask) {
-        newTask.setLastModifiedAt(LocalDateTime.now());
-        return taskRepository.save(newTask);
-    }
-
     public void deleteById(UUID id) {
         taskRepository.deleteById(id);
+    }
+
+    public Task createTask(TaskCreate taskCreate) {
+        if(taskCreate == null) {
+            return null;
+        }
+        Task parentTask = taskRepository.findById(taskCreate.parentId()).orElse(null);
+        Tasklist tl = tasklistService.getById(taskCreate.listId());
+        if(tl == null) {
+            return null;
+        }
+        Task newTask = taskCreateMapper.toEntity(taskCreate, parentTask, tl);
+        return taskRepository.save(newTask);
     }
 }

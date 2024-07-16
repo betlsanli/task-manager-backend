@@ -1,5 +1,6 @@
 package com.example.todo.controllers;
 
+import com.example.todo.dto.request.create.TasklistCreate;
 import com.example.todo.entities.AppUser;
 import com.example.todo.entities.Tasklist;
 import com.example.todo.services.AppUserService;
@@ -7,10 +8,7 @@ import com.example.todo.services.TasklistService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -50,6 +48,16 @@ public class TasklistController {
     @GetMapping("/{listId}")
     public Tasklist getTasklistByListId(@PathVariable UUID listId) {
         return tasklistService.getById(listId);
+    }
+
+    @PostMapping("create-tasklist")
+    public Tasklist createTasklist(@RequestBody TasklistCreate tasklist) {
+        return tasklistService.createTasklist(tasklist);
+    }
+
+    @DeleteMapping("/delete/{listId}")
+    public void deleteTasklist(@PathVariable UUID listId) {
+        tasklistService.deleteById(listId);
     }
 
 }
