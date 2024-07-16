@@ -1,10 +1,8 @@
 package com.example.todo.controllers;
 
-import com.example.todo.entities.AppUser;
-import com.example.todo.entities.Tasklist;
-import com.example.todo.entities.Task;
+import com.example.todo.dto.AppUserDTO;
+import com.example.todo.dto.TasklistDTO;
 import com.example.todo.services.AppUserService;
-import com.example.todo.services.TaskService;
 import com.example.todo.services.TasklistService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,19 +21,17 @@ public class TasklistController {
 
     private final TasklistService tasklistService;
     private final AppUserService appUserService;
-    private final TaskService taskService;
     private static final Logger log = LoggerFactory.getLogger(TasklistController.class);
 
     @Autowired
-    public TasklistController(TasklistService tasklistService, AppUserService appUserService, TaskService taskService) {
+    public TasklistController(TasklistService tasklistService, AppUserService appUserService) {
         this.tasklistService = tasklistService;
         this.appUserService = appUserService;
-        this.taskService = taskService;
     }
 
     @GetMapping("/{userId}")
-    public List<Tasklist> getAllTasklistByUserId(@PathVariable UUID userId) {
-        AppUser user = appUserService.getById(userId).orElse(null);
+    public List<TasklistDTO> getAllTasklistByUserId(@PathVariable UUID userId) {
+        AppUserDTO user = appUserService.getById(userId).orElse(null);
         if(user == null) {
             log.error("User not found");
             return null;
@@ -56,8 +52,8 @@ public class TasklistController {
 //    }
 
     @GetMapping("/{listId}")
-    public Tasklist getTasklistByListId(@PathVariable UUID listId) {
-        Tasklist tl = tasklistService.getById(listId).orElse(null);
+    public TasklistDTO getTasklistByListId(@PathVariable UUID listId) {
+        TasklistDTO tl = tasklistService.getById(listId).orElse(null);
         if(tl == null) {
             log.error("Tasklist not found");
             return null;

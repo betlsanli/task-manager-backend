@@ -21,7 +21,6 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
     List<Task> findAllByBelongsToIn(List<Tasklist> tasklists);
     List<Task> findAllByParentTask(Task parenTask);
 
-    Optional<Task> findById(UUID id);
 
     List<Task> findAllByPriority(Priority priority);
     List<Task> findAllByPriorityAndDueDate(Priority priority, LocalDateTime dueDate);

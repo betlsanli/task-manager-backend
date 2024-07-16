@@ -1,8 +1,8 @@
 package com.example.todo.controllers;
 
-import com.example.todo.entities.AppUser;
-import com.example.todo.entities.Task;
-import com.example.todo.entities.Tasklist;
+import com.example.todo.dto.AppUserDTO;
+import com.example.todo.dto.TaskDTO;
+import com.example.todo.dto.TasklistDTO;
 import com.example.todo.services.AppUserService;
 import com.example.todo.services.TaskService;
 import com.example.todo.services.TasklistService;
@@ -34,21 +34,21 @@ public class TaskController {
     }
 
     @GetMapping("/{userId}")
-    public List<Task> getAllTaskByUser(@PathVariable UUID userId) {
-        AppUser user = appUserService.getById(userId).orElse(null);
+    public List<TaskDTO> getAllTaskByUser(@PathVariable UUID userId) {
+        AppUserDTO user = appUserService.getById(userId).orElse(null);
         if (user == null) {
             log.error("User not found");
             return null;
         }
-        List<Tasklist> tasklists = tasklistService.getAllByUser(user);
+        List<TasklistDTO> tasklists = tasklistService.getAllByUser(user);
         return taskService.getAllByTasklists(tasklists);
     }
 
     // duplicate of "/tasklist/{listId}/tasks"
 
     @GetMapping("/{listId}")
-    public List<Task> getAllTaskByTasklist(@PathVariable UUID listId) {
-        Tasklist tl = tasklistService.getById(listId).orElse(null);
+    public List<TaskDTO> getAllTaskByTasklist(@PathVariable UUID listId) {
+        TasklistDTO tl = tasklistService.getById(listId).orElse(null);
         if (tl == null) {
             log.error("Tasklist not found");
             return null;
@@ -57,8 +57,8 @@ public class TaskController {
     }
 
     @GetMapping("/{taskId}")
-    public Task getTaskById(@PathVariable UUID taskId) {
-        Task task = taskService.getById(taskId).orElse(null);
+    public TaskDTO getTaskById(@PathVariable UUID taskId) {
+        TaskDTO task = taskService.getById(taskId).orElse(null);
         if (task == null) {
             log.error("Task not found");
             return null;

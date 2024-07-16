@@ -9,7 +9,6 @@ import java.util.UUID;
 
 public interface AppUserRepository extends JpaRepository<AppUser, UUID> {
 
-    Optional<AppUser> findById(UUID id);
     Optional<AppUser> findByEmail(String email);
 
     List<AppUser> findAllByFirstNameContainingIgnoreCase(String firstName);

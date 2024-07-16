@@ -1,6 +1,7 @@
 package com.example.todo.controllers;
 
 
+import com.example.todo.dto.AppUserDTO;
 import com.example.todo.entities.AppUser;
 import com.example.todo.services.AppUserService;
 import org.slf4j.Logger;
@@ -26,8 +27,8 @@ public class AppUserController {
     }
 
     @GetMapping("/{userId}")
-    public AppUser getUserById(@PathVariable UUID userId) {
-        AppUser user = appUserService.getById(userId).orElse(null);
+    public AppUserDTO getUserById(@PathVariable UUID userId) {
+        AppUserDTO user = appUserService.getById(userId).orElse(null);
         if (user == null) {
             log.error("User not found");
             return null;
@@ -36,7 +37,7 @@ public class AppUserController {
     }
 
     @GetMapping("/all-users")
-    public List<AppUser> getAllUsers() {
+    public List<AppUserDTO> getAllUsers() {
         return appUserService.getAll();
     }
 

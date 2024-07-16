@@ -1,5 +1,7 @@
 package com.example.todo.services;
 
+import com.example.todo.dto.AppUserDTO;
+import com.example.todo.dto.mappers.AppUserDTOMapper;
 import com.example.todo.entities.AppUser;
 import com.example.todo.repositories.AppUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,24 +11,27 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class AppUserService {
 
 
     private final AppUserRepository appUserRepository;
+    private final AppUserDTOMapper appUserDTOMapper;
 
     @Autowired
-    public AppUserService(AppUserRepository appUserRepository) {
+    public AppUserService(AppUserRepository appUserRepository, AppUserDTOMapper appUserDTOMapper) {
         this.appUserRepository = appUserRepository;
+        this.appUserDTOMapper = appUserDTOMapper;
     }
 
-    public List<AppUser> getAll() {
-        return appUserRepository.findAll();
+    public List<AppUserDTO> getAll() {
+        return appUserRepository.findAll().stream().map(appUserDTOMapper::apply).collect(Collectors.toList());
     }
 
-    public Optional<AppUser> getById(UUID id) {
-        return appUserRepository.findById(id);
+    public Optional<AppUserDTO> getById(UUID id) {
+        return appUserRepository.findById(id).stream().map(appUserDTOMapper::apply).findFirst();
     }
 
     public AppUser save(AppUser appUser) {
