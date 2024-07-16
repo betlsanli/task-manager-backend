@@ -3,6 +3,8 @@ package com.example.todo.entities;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,9 +44,11 @@ public class Task extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Task parentTask;
 
     @ManyToOne
     @JoinColumn(name = "list_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Tasklist belongsTo;
 }

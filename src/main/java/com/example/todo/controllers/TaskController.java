@@ -24,7 +24,6 @@ public class TaskController {
     private final TaskService taskService;
     private final AppUserService appUserService;
     private final TasklistService tasklistService;
-    private static final Logger log = LoggerFactory.getLogger(TaskController.class);
 
     @Autowired
     public TaskController(TaskService taskService, AppUserService appUserService, TasklistService tasklistService) {
@@ -35,11 +34,7 @@ public class TaskController {
 
     @GetMapping("/{userId}")
     public List<TaskDTO> getAllTaskByUser(@PathVariable UUID userId) {
-        AppUserDTO user = appUserService.getById(userId).orElse(null);
-        if (user == null) {
-            log.error("User not found");
-            return null;
-        }
+        AppUserDTO user = appUserService.getById(userId);
         List<TasklistDTO> tasklists = tasklistService.getAllByUser(user);
         return taskService.getAllByTasklists(tasklists);
     }
@@ -48,21 +43,12 @@ public class TaskController {
 
     @GetMapping("/{listId}")
     public List<TaskDTO> getAllTaskByTasklist(@PathVariable UUID listId) {
-        TasklistDTO tl = tasklistService.getById(listId).orElse(null);
-        if (tl == null) {
-            log.error("Tasklist not found");
-            return null;
-        }
+        TasklistDTO tl = tasklistService.getById(listId);
         return taskService.getAllByTasklist(tl);
     }
 
     @GetMapping("/{taskId}")
     public TaskDTO getTaskById(@PathVariable UUID taskId) {
-        TaskDTO task = taskService.getById(taskId).orElse(null);
-        if (task == null) {
-            log.error("Task not found");
-            return null;
-        }
-        return task;
+        return taskService.getById(taskId);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.todo.services;
 
+import com.example.todo.controllers.TasklistController;
 import com.example.todo.dto.TaskDTO;
 import com.example.todo.dto.TasklistDTO;
 import com.example.todo.dto.mappers.TaskDTOMapper;
@@ -7,11 +8,14 @@ import com.example.todo.dto.mappers.TasklistDTOMapper;
 import com.example.todo.entities.Task;
 import com.example.todo.entities.Tasklist;
 import com.example.todo.repositories.TaskRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -23,6 +27,7 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final TaskDTOMapper taskDTOMapper;
     private final TasklistDTOMapper tasklistDTOMapper;
+    private static final Logger log = LoggerFactory.getLogger(TaskService.class);
 
     @Autowired
     public TaskService(TaskRepository taskRepository, TaskDTOMapper taskDTOMapper, TasklistDTOMapper tasklistDTOMapper) {
@@ -35,8 +40,13 @@ public class TaskService {
         return taskRepository.findAll().stream().map(taskDTOMapper::apply).collect(Collectors.toList());
     }
 
-    public Optional<TaskDTO> getById(UUID id) {
-        return taskRepository.findById(id).stream().map(taskDTOMapper::apply).findFirst();
+    public TaskDTO getById(UUID id) {
+        try {
+            return taskRepository.findById(id).stream().map(taskDTOMapper::apply).findFirst().orElseThrow();
+        }catch (NoSuchElementException e) {
+            log.error(e.getMessage());
+            return null;
+        }
     }
 
 //    public List<Task> getAllByUser(AppUser user) {
@@ -45,17 +55,26 @@ public class TaskService {
 //    }
 
     public List<TaskDTO> getAllByTasklist(TasklistDTO tasklistDTO) {
+        if(tasklistDTO == null) {
+            return null;
+        }
         Tasklist tasklist = tasklistDTOMapper.toEntity(tasklistDTO);
         return taskRepository.findAllByBelongsTo(tasklist).stream().map(taskDTOMapper::apply).collect(Collectors.toList());
     }
 
     public List<TaskDTO> getAllByTasklists(List<TasklistDTO> tasklistsDTO) {
+        if(tasklistsDTO == null || tasklistsDTO.isEmpty()) {
+            return null;
+        }
         List<Tasklist> tasklists = tasklistsDTO.stream().map(tasklistDTOMapper::toEntity).collect(Collectors.toList());
         return taskRepository.findAllByBelongsToIn(tasklists).stream().map(taskDTOMapper::apply).collect(Collectors.toList());
     }
 
     public List<TaskDTO> getAllByParentTask(Task parent) {
-        return taskRepository.findAllByParentTask(parent).stream().map(taskDTOMapper).collect(Collectors.toList());
+        if(parent == null) {
+            return null;
+        }
+        return taskRepository.findAllByParentTask(parent).stream().map(taskDTOMapper::apply).collect(Collectors.toList());
     }
 
     public Task save(Task newTask) {

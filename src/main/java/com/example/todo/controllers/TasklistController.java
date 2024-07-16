@@ -31,11 +31,7 @@ public class TasklistController {
 
     @GetMapping("/{userId}")
     public List<TasklistDTO> getAllTasklistByUserId(@PathVariable UUID userId) {
-        AppUserDTO user = appUserService.getById(userId).orElse(null);
-        if(user == null) {
-            log.error("User not found");
-            return null;
-        }
+        AppUserDTO user = appUserService.getById(userId);
         return tasklistService.getAllByUser(user);
     }
 
@@ -53,12 +49,7 @@ public class TasklistController {
 
     @GetMapping("/{listId}")
     public TasklistDTO getTasklistByListId(@PathVariable UUID listId) {
-        TasklistDTO tl = tasklistService.getById(listId).orElse(null);
-        if(tl == null) {
-            log.error("Tasklist not found");
-            return null;
-        }
-        return tl;
+        return tasklistService.getById(listId);
     }
 
 }
