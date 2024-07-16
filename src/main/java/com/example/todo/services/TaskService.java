@@ -55,7 +55,7 @@ public class TaskService {
     }
 
     public List<TaskDTO> getAllByParentTask(Task parent) {
-        return taskRepository.findAllByParentTask(parent).stream().map(taskDTOMapper::apply).collect(Collectors.toList());
+        return taskRepository.findAllByParentTask(parent).stream().map(taskDTOMapper).collect(Collectors.toList());
     }
 
     public Task save(Task newTask) {
