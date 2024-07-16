@@ -1,6 +1,7 @@
 package com.example.todo.controllers;
 
 import com.example.todo.dto.request.create.TasklistCreate;
+import com.example.todo.dto.request.update.TasklistUpdate;
 import com.example.todo.entities.AppUser;
 import com.example.todo.entities.Tasklist;
 import com.example.todo.services.AppUserService;
@@ -58,6 +59,11 @@ public class TasklistController {
     @DeleteMapping("/delete/{listId}")
     public void deleteTasklist(@PathVariable UUID listId) {
         tasklistService.deleteById(listId);
+    }
+
+    @PutMapping("/edit/{listID}")
+    public Tasklist updateTasklist(@PathVariable UUID listId, @RequestBody TasklistUpdate tasklist) {
+        return tasklistService.updateTasklist(listId, tasklist);
     }
 
 }

@@ -2,7 +2,10 @@ package com.example.todo.services;
 
 import com.example.todo.dto.request.create.TasklistCreate;
 import com.example.todo.dto.request.create.mappers.TasklistCreateMapper;
+import com.example.todo.dto.request.update.TasklistUpdate;
+import com.example.todo.dto.request.update.mappers.TasklistUpdateMapper;
 import com.example.todo.entities.AppUser;
+import com.example.todo.entities.Task;
 import com.example.todo.entities.Tasklist;
 import com.example.todo.repositories.TasklistRepository;
 import org.slf4j.Logger;
@@ -22,12 +25,16 @@ public class TasklistService {
     private final AppUserService appUserService;
     private static final Logger log = LoggerFactory.getLogger(TasklistService.class);
     private final TasklistCreateMapper tasklistCreateMapper;
+    private final TasklistUpdateMapper tasklistUpdateMapper;
+    private final TaskService taskService;
 
     @Autowired
-    public TasklistService(TasklistRepository tasklistRepository, AppUserService appUserService, TasklistCreateMapper tasklistCreateMapper) {
+    public TasklistService(TasklistRepository tasklistRepository, AppUserService appUserService, TasklistCreateMapper tasklistCreateMapper, TasklistUpdateMapper tasklistUpdateMapper, TaskService taskService) {
         this.tasklistRepository = tasklistRepository;
         this.appUserService = appUserService;
         this.tasklistCreateMapper = tasklistCreateMapper;
+        this.tasklistUpdateMapper = tasklistUpdateMapper;
+        this.taskService = taskService;
     }
 
     public List<Tasklist> getAll() {
@@ -51,6 +58,13 @@ public class TasklistService {
         }
     }
 
+    public List<Tasklist> getAllByIds(List<UUID> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return null;
+        }
+        return tasklistRepository.findAllById(ids);
+    }
+
     public void deleteById(UUID id) {
         tasklistRepository.deleteById(id);
     }
@@ -65,5 +79,21 @@ public class TasklistService {
         }
         Tasklist tl = tasklistCreateMapper.toEntity(tasklist, userList);
         return tasklistRepository.save(tl);
+    }
+
+    public Tasklist updateTasklist(UUID listId, TasklistUpdate tasklist) {
+        try {
+            tasklistRepository.findById(listId).orElseThrow();
+        }catch (NoSuchElementException e) {
+            log.error(e.getMessage());
+            return null;
+        }
+        List<Task> tasks = taskService.getAllByIds(tasklist.taskIds());
+
+        List<AppUser> userList = appUserService.getAllByIds(tasklist.userIds());
+        if (userList == null || userList.isEmpty()) {
+            return null;
+        }
+        return tasklistUpdateMapper.toEntity(tasklist,listId,tasks,userList);
     }
 }

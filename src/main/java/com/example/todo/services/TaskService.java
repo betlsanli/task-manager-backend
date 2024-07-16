@@ -70,6 +70,13 @@ public class TaskService {
         return taskRepository.findAllByParentTask(parent);
     }
 
+    public List<Task> getAllByIds(List<UUID> ids) {
+        if(ids == null || ids.isEmpty()) {
+            return null;
+        }
+        return taskRepository.findAllById(ids);
+    }
+
     public void deleteById(UUID id) {
         taskRepository.deleteById(id);
     }

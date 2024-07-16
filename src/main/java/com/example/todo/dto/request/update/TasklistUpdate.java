@@ -7,7 +7,6 @@ import java.util.UUID;
 public record TasklistUpdate (
         String title,
         String description,
-        LocalDate lastModifiedAt,
         List<UUID> taskIds,
         List<UUID> userIds
 ){}

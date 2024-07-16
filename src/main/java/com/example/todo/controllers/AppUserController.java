@@ -1,6 +1,7 @@
 package com.example.todo.controllers;
 
 import com.example.todo.dto.request.create.AppUserCreate;
+import com.example.todo.dto.request.update.AppUserUpdate;
 import com.example.todo.entities.AppUser;
 import com.example.todo.services.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,11 @@ public class AppUserController {
     @DeleteMapping("/delete/{userId}")
     public void deleteUser(@PathVariable UUID userId) {
         appUserService.deleteById(userId);
+    }
+
+    @PutMapping("/edit/{userId}")
+    public AppUser updateUser(@PathVariable UUID userId, @RequestBody AppUserUpdate updateUserRequest) {
+        return appUserService.updateUser(userId, updateUserRequest);
     }
 
 }

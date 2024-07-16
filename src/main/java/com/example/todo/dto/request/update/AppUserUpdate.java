@@ -9,6 +9,5 @@ public record AppUserUpdate(
         String password,
         String firstName,
         String lastName,
-        LocalDate lastModifiedAt,
         List<UUID> listIds
 ) {}
