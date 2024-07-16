@@ -1,7 +1,5 @@
 package com.example.todo.services;
 
-import com.example.todo.dto.AppUserDTO;
-import com.example.todo.dto.mappers.AppUserDTOMapper;
 import com.example.todo.entities.AppUser;
 import com.example.todo.repositories.AppUserRepository;
 import org.slf4j.Logger;
@@ -13,29 +11,26 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class AppUserService {
 
 
     private final AppUserRepository appUserRepository;
-    private final AppUserDTOMapper appUserDTOMapper;
     private static final Logger log = LoggerFactory.getLogger(AppUserService.class);
 
     @Autowired
-    public AppUserService(AppUserRepository appUserRepository, AppUserDTOMapper appUserDTOMapper) {
+    public AppUserService(AppUserRepository appUserRepository) {
         this.appUserRepository = appUserRepository;
-        this.appUserDTOMapper = appUserDTOMapper;
     }
 
-    public List<AppUserDTO> getAll() {
-        return appUserRepository.findAll().stream().map(appUserDTOMapper::apply).collect(Collectors.toList());
+    public List<AppUser> getAll() {
+        return appUserRepository.findAll();
     }
 
-    public AppUserDTO getById(UUID id) {
+    public AppUser getById(UUID id) {
         try {
-            return appUserRepository.findById(id).stream().map(appUserDTOMapper::apply).findFirst().orElseThrow();
+            return appUserRepository.findById(id).orElseThrow();
         }catch (NoSuchElementException e) {
             log.error(e.getMessage());
             return null;

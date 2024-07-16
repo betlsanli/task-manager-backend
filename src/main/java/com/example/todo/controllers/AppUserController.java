@@ -1,7 +1,6 @@
 package com.example.todo.controllers;
 
-
-import com.example.todo.dto.AppUserDTO;
+import com.example.todo.entities.AppUser;
 import com.example.todo.services.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,12 +23,12 @@ public class AppUserController {
     }
 
     @GetMapping("/{userId}")
-    public AppUserDTO getUserById(@PathVariable UUID userId) {
+    public AppUser getUserById(@PathVariable UUID userId) {
         return appUserService.getById(userId);
     }
 
     @GetMapping("/all-users")
-    public List<AppUserDTO> getAllUsers() {
+    public List<AppUser> getAllUsers() {
         return appUserService.getAll();
     }
 

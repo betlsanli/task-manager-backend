@@ -1,6 +1,7 @@
 package com.example.todo.repositories;
 
 import com.example.todo.entities.AppUser;
+import com.example.todo.entities.Tasklist;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -14,4 +15,5 @@ public interface AppUserRepository extends JpaRepository<AppUser, UUID> {
     List<AppUser> findAllByFirstNameContainingIgnoreCase(String firstName);
     List<AppUser> findAllByLastNameContainingIgnoreCase(String lastName);
     List<AppUser> findAllByFirstNameAndLastName(String firstName, String lastName);
+    List<AppUser> findAllByTasklistsContains(Tasklist tasklist);
 }

@@ -1,10 +1,5 @@
 package com.example.todo.services;
 
-import com.example.todo.controllers.TaskController;
-import com.example.todo.dto.AppUserDTO;
-import com.example.todo.dto.TasklistDTO;
-import com.example.todo.dto.mappers.AppUserDTOMapper;
-import com.example.todo.dto.mappers.TasklistDTOMapper;
 import com.example.todo.entities.AppUser;
 import com.example.todo.entities.Tasklist;
 import com.example.todo.repositories.TasklistRepository;
@@ -16,40 +11,33 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class TasklistService {
 
     private final TasklistRepository tasklistRepository;
-    private final TasklistDTOMapper tasklistDTOMapper;
-    private final AppUserDTOMapper appUserDTOMapper;
     private static final Logger log = LoggerFactory.getLogger(TasklistService.class);
 
     @Autowired
-    public TasklistService(TasklistRepository tasklistRepository, TasklistDTOMapper tasklistDTOMapper, AppUserDTOMapper appUserDTOMapper) {
+    public TasklistService(TasklistRepository tasklistRepository) {
         this.tasklistRepository = tasklistRepository;
-        this.tasklistDTOMapper = tasklistDTOMapper;
-        this.appUserDTOMapper = appUserDTOMapper;
     }
 
-    public List<TasklistDTO> getAll() {
-        return tasklistRepository.findAll().stream().map(tasklistDTOMapper::apply).collect(Collectors.toList());
+    public List<Tasklist> getAll() {
+        return tasklistRepository.findAll();
     }
 
-    public List<TasklistDTO> getAllByUser(AppUserDTO userDTO) {
-        if (userDTO == null) {
+    public List<Tasklist> getAllByUser(AppUser user) {
+        if (user == null) {
             return null;
         }
-        AppUser user = appUserDTOMapper.toEntity(userDTO);
-        return tasklistRepository.findAllByUsersContains(user).stream().map(tasklistDTOMapper::apply).collect(Collectors.toList());
+        return tasklistRepository.findAllByUsersContains(user);
     }
 
-    public TasklistDTO getById(UUID id) {
+    public Tasklist getById(UUID id) {
         try {
-            return tasklistRepository.findById(id).stream().map(tasklistDTOMapper::apply).findFirst().orElseThrow();
+            return tasklistRepository.findById(id).orElseThrow();
 
         }catch (NoSuchElementException e) {
             log.error(e.getMessage());

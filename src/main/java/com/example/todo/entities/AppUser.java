@@ -1,5 +1,6 @@
 package com.example.todo.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,6 +21,7 @@ public class AppUser extends  BaseEntity{
     @Column(unique=true, nullable = false,length = 320)
     private String email;
 
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
 
@@ -38,5 +40,6 @@ public class AppUser extends  BaseEntity{
                     @JoinColumn(name = "tasklist_id")
             }
     )
+    @JsonIgnore
     private List<Tasklist> tasklists;
 }

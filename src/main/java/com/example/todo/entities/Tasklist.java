@@ -1,5 +1,6 @@
 package com.example.todo.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
@@ -26,9 +27,11 @@ public class Tasklist extends BaseEntity{
     @Column(length = 512)
     private String description;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "belongsTo")
     private List<Task> tasks;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "tasklists")
     private List<AppUser> users;
 }

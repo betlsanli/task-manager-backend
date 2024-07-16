@@ -1,7 +1,7 @@
 package com.example.todo.controllers;
 
-import com.example.todo.dto.AppUserDTO;
-import com.example.todo.dto.TasklistDTO;
+import com.example.todo.entities.AppUser;
+import com.example.todo.entities.Tasklist;
 import com.example.todo.services.AppUserService;
 import com.example.todo.services.TasklistService;
 import org.slf4j.Logger;
@@ -30,8 +30,8 @@ public class TasklistController {
     }
 
     @GetMapping("/{userId}")
-    public List<TasklistDTO> getAllTasklistByUserId(@PathVariable UUID userId) {
-        AppUserDTO user = appUserService.getById(userId);
+    public List<Tasklist> getAllTasklistByUserId(@PathVariable UUID userId) {
+        AppUser user = appUserService.getById(userId);
         return tasklistService.getAllByUser(user);
     }
 
@@ -48,7 +48,7 @@ public class TasklistController {
 //    }
 
     @GetMapping("/{listId}")
-    public TasklistDTO getTasklistByListId(@PathVariable UUID listId) {
+    public Tasklist getTasklistByListId(@PathVariable UUID listId) {
         return tasklistService.getById(listId);
     }
 

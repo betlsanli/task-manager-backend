@@ -1,13 +1,11 @@
 package com.example.todo.controllers;
 
-import com.example.todo.dto.AppUserDTO;
-import com.example.todo.dto.TaskDTO;
-import com.example.todo.dto.TasklistDTO;
+import com.example.todo.entities.AppUser;
+import com.example.todo.entities.Task;
+import com.example.todo.entities.Tasklist;
 import com.example.todo.services.AppUserService;
 import com.example.todo.services.TaskService;
 import com.example.todo.services.TasklistService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,22 +31,22 @@ public class TaskController {
     }
 
     @GetMapping("/{userId}")
-    public List<TaskDTO> getAllTaskByUser(@PathVariable UUID userId) {
-        AppUserDTO user = appUserService.getById(userId);
-        List<TasklistDTO> tasklists = tasklistService.getAllByUser(user);
+    public List<Task> getAllTaskByUser(@PathVariable UUID userId) {
+        AppUser user = appUserService.getById(userId);
+        List<Tasklist> tasklists = tasklistService.getAllByUser(user);
         return taskService.getAllByTasklists(tasklists);
     }
 
     // duplicate of "/tasklist/{listId}/tasks"
 
     @GetMapping("/{listId}")
-    public List<TaskDTO> getAllTaskByTasklist(@PathVariable UUID listId) {
-        TasklistDTO tl = tasklistService.getById(listId);
+    public List<Task> getAllTaskByTasklist(@PathVariable UUID listId) {
+        Tasklist tl = tasklistService.getById(listId);
         return taskService.getAllByTasklist(tl);
     }
 
     @GetMapping("/{taskId}")
-    public TaskDTO getTaskById(@PathVariable UUID taskId) {
+    public Task getTaskById(@PathVariable UUID taskId) {
         return taskService.getById(taskId);
     }
 }
