@@ -1,6 +1,7 @@
 package com.example.todo.repositories;
 
 import com.example.todo.entities.Priority;
+import com.example.todo.entities.Status;
 import com.example.todo.entities.Task;
 import com.example.todo.entities.Tasklist;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,6 +25,8 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
 
     List<Task> findAllByPriority(Priority priority);
     List<Task> findAllByPriorityAndDueDate(Priority priority, LocalDateTime dueDate);
+
+    List<Task> findAllByStatus(Status status);
 
     List<Task> findAllByDueDate(LocalDateTime dueDate);
     List<Task> findAllByDueDateBefore(LocalDateTime dueDate);

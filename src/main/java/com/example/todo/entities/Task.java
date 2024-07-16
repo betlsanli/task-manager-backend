@@ -25,6 +25,10 @@ public class Task extends BaseEntity {
     @Builder.Default
     private Priority priority = Priority.Orta;
 
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private Status status = Status.Yapılacak;
+
     private LocalDateTime dueDate;
 
     @Column(insertable = false)
