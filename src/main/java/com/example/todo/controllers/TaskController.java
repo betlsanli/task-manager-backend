@@ -1,12 +1,10 @@
 package com.example.todo.controllers;
 
 import com.example.todo.dto.request.create.TaskCreate;
-import com.example.todo.entities.AppUser;
+import com.example.todo.dto.request.update.TaskUpdate;
 import com.example.todo.entities.Task;
-import com.example.todo.entities.Tasklist;
-import com.example.todo.services.AppUserService;
 import com.example.todo.services.TaskService;
-import com.example.todo.services.TasklistService;
+import com.example.todo.services.create.TaskCreateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,29 +16,24 @@ import java.util.UUID;
 public class TaskController {
 
     private final TaskService taskService;
-    private final AppUserService appUserService;
-    private final TasklistService tasklistService;
+    private final TaskCreateService taskCreateService;
 
     @Autowired
-    public TaskController(TaskService taskService, AppUserService appUserService, TasklistService tasklistService) {
+    public TaskController(TaskService taskService, TaskCreateService taskCreateService) {
         this.taskService = taskService;
-        this.appUserService = appUserService;
-        this.tasklistService = tasklistService;
+        this.taskCreateService = taskCreateService;
     }
 
     @GetMapping("/{userId}")
     public List<Task> getAllTaskByUser(@PathVariable UUID userId) {
-        AppUser user = appUserService.getById(userId);
-        List<Tasklist> tasklists = tasklistService.getAllByUser(user);
-        return taskService.getAllByTasklists(tasklists);
+        return taskService.getAllByUser(userId);
     }
 
     // duplicate of "/tasklist/{listId}/tasks"
 
     @GetMapping("/{listId}")
     public List<Task> getAllTaskByTasklist(@PathVariable UUID listId) {
-        Tasklist tl = tasklistService.getById(listId);
-        return taskService.getAllByTasklist(tl);
+        return taskService.getAllByTasklist(listId);
     }
 
     @GetMapping("/{taskId}")
@@ -50,11 +43,16 @@ public class TaskController {
 
     @PostMapping("/create-task")
     public Task createTask(@RequestBody TaskCreate taskCreate) {
-        return taskService.createTask(taskCreate);
+        return taskCreateService.createTask(taskCreate);
     }
 
     @DeleteMapping("/delete/{taskId}")
     public void deleteTask(@PathVariable UUID taskId) {
         taskService.deleteById(taskId);
+    }
+
+    @PutMapping("/edit/{taskId}")
+    public Task updateTask(@PathVariable UUID taskId, @RequestBody TaskUpdate taskUpdate) {
+        return taskCreateService.updateTask(taskId, taskUpdate);
     }
 }

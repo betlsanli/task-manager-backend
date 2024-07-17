@@ -6,8 +6,7 @@ import com.example.todo.entities.AppUser;
 import com.example.todo.entities.Tasklist;
 import com.example.todo.services.AppUserService;
 import com.example.todo.services.TasklistService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.example.todo.services.create.TasklistCreateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,12 +19,14 @@ public class TasklistController {
 
     private final TasklistService tasklistService;
     private final AppUserService appUserService;
-    private static final Logger log = LoggerFactory.getLogger(TasklistController.class);
+   // private static final Logger log = LoggerFactory.getLogger(TasklistController.class);
+    private final TasklistCreateService tasklistCreateService;
 
     @Autowired
-    public TasklistController(TasklistService tasklistService, AppUserService appUserService) {
+    public TasklistController(TasklistService tasklistService, AppUserService appUserService, TasklistCreateService tasklistCreateService) {
         this.tasklistService = tasklistService;
         this.appUserService = appUserService;
+        this.tasklistCreateService = tasklistCreateService;
     }
 
     @GetMapping("/{userId}")
@@ -53,7 +54,7 @@ public class TasklistController {
 
     @PostMapping("create-tasklist")
     public Tasklist createTasklist(@RequestBody TasklistCreate tasklist) {
-        return tasklistService.createTasklist(tasklist);
+        return tasklistCreateService.createTasklist(tasklist);
     }
 
     @DeleteMapping("/delete/{listId}")
@@ -61,9 +62,9 @@ public class TasklistController {
         tasklistService.deleteById(listId);
     }
 
-    @PutMapping("/edit/{listID}")
+    @PutMapping("/edit/{listId}")
     public Tasklist updateTasklist(@PathVariable UUID listId, @RequestBody TasklistUpdate tasklist) {
-        return tasklistService.updateTasklist(listId, tasklist);
+        return tasklistCreateService.updateTasklist(listId, tasklist);
     }
 
 }
