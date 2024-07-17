@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper=true)
@@ -31,15 +32,16 @@ public class AppUser extends  BaseEntity{
     @Column(nullable = false, length = 128)
     private String lastName;
 
-    @ManyToMany //owner of the relationship
-    @JoinTable(name = "user_tasklist",
-            joinColumns = {
-                    @JoinColumn(name = "user_id")
-            },
-            inverseJoinColumns = {
-                    @JoinColumn(name = "tasklist_id")
-            }
-    )
+    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Tasklist> tasklists;
+
+    public void addTasklist(Tasklist tasklist){
+        if(this.tasklists == null){
+            this.tasklists = new ArrayList<>();
+        }
+        if(!this.tasklists.contains(tasklist)){
+            this.tasklists.add(tasklist);
+        }
+    }
 }

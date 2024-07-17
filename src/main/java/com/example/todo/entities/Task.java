@@ -1,5 +1,8 @@
 package com.example.todo.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -7,6 +10,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper=true)
@@ -39,9 +43,12 @@ public class Task extends BaseEntity {
     @Column(insertable = false)
     private LocalDateTime startedAt;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "parentTask")
-    private List<Task> subTasks;
+    @Builder.Default
+    private List<Task> subTasks = new ArrayList<>();
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "parent_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -51,4 +58,10 @@ public class Task extends BaseEntity {
     @JoinColumn(name = "list_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Tasklist belongsTo;
+
+    public void addSubTask(Task subTask) {
+        if (!subTasks.contains(subTask)) {
+            this.subTasks.add(subTask);
+        }
+    }
 }

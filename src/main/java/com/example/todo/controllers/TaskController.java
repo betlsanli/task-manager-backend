@@ -34,7 +34,17 @@ public class TaskController {
         this.taskCreateService = taskCreateService;
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/all-task")
+    public ResponseEntity<List<Task>> getAllTask() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(taskService.getAll());
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/of-user/{userId}")
     public ResponseEntity<List<Task>> getAllTaskByUser(@PathVariable UUID userId) {
         try {
             if(userId == null)
@@ -54,7 +64,7 @@ public class TaskController {
 
     // duplicate of "/tasklist/{listId}/tasks"
 
-    @GetMapping("/{listId}")
+    @GetMapping("/of-list/{listId}")
     public ResponseEntity<List<Task>> getAllTaskByTasklist(@PathVariable UUID listId) {
         try {
             if(listId == null)

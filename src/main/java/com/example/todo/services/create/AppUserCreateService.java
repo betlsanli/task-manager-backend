@@ -8,6 +8,7 @@ import com.example.todo.entities.AppUser;
 import com.example.todo.entities.Tasklist;
 import com.example.todo.repositories.AppUserRepository;
 import com.example.todo.services.TasklistService;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -31,15 +32,20 @@ public class AppUserCreateService {
         this.tasklistService = tasklistService;
     }
 
+    @Transactional
     public AppUser createUser(AppUserCreate newUser) {
         AppUser toSave = appUserCreateMapper.toEntity(newUser);
         return appUserRepository.save(toSave);
     }
 
+    @Transactional
     public AppUser updateUser(UUID userId, AppUserUpdate updateUserRequest) {
         appUserRepository.findById(userId).orElseThrow();
         List<Tasklist> tasklists = tasklistService.getAllByIds(updateUserRequest.listIds());
         AppUser toSave = appUserUpdateMapper.toEntity(updateUserRequest,userId,tasklists);
+        for(Tasklist tasklist : tasklists) {
+            tasklist.addUser(toSave);
+        }
         return appUserRepository.save(toSave);
     }
 }

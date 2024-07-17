@@ -1,6 +1,8 @@
 package com.example.todo.dto.request.create;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -13,6 +15,6 @@ public record TaskCreate(
         String status,
         LocalDateTime dueDate,
         UUID parentId,
-        @NotEmpty(message = "Listid cannot be null or empty")
+        @NotNull(message = "Listid cannot be null or empty")
         UUID listId
 ) {}

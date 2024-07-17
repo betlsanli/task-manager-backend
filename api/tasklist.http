@@ -1,0 +1,64 @@
+### GET all by user
+GET http://localhost:8080/tasklist/of-user/a08b7f5f-4179-44c5-9d72-d40c5cc30d89
+
+### GET tasklist details
+GET http://localhost:8080/tasklist/dff29c18-a939-413d-a309-00e90cd3decf
+
+### GET all tasklist
+GET http://localhost:8080/tasklist/all-list
+
+### POST tasklist 1
+POST http://localhost:8080/tasklist/create-tasklist
+Content-Type: application/json
+
+{
+  "title": "liste 1",
+  "userIds": ["a08b7f5f-4179-44c5-9d72-d40c5cc30d89"]
+}
+
+### POST tasklist 2
+POST http://localhost:8080/tasklist/create-tasklist
+Content-Type: application/json
+
+{
+  "title": "liste 2",
+  "description": "aciklama 2",
+  "userIds": ["a08b7f5f-4179-44c5-9d72-d40c5cc30d89"]
+}
+
+### POST tasklist 3
+POST http://localhost:8080/tasklist/create-tasklist
+Content-Type: application/json
+
+{
+  "title": "liste 3",
+  "description": "aciklama 3",
+  "userIds": ["a08b7f5f-4179-44c5-9d72-d40c5cc30d89"]
+}
+
+### PUT tasklist 1
+PUT http://localhost:8080/tasklist/edit/ba03feb5-3719-48cc-ac81-bf5be27a0816
+Content-Type: application/json
+
+{
+  "title": "liste 1",
+  "description": "aciklama 1111",
+  "taskIds": [],
+  "userIds": ["a08b7f5f-4179-44c5-9d72-d40c5cc30d89","9e3cb0a7-63f6-4141-b384-a2a276728ed7"]
+}
+
+
+### PUT tasklist 2
+PUT http://localhost:8080/tasklist/edit/dff29c18-a939-413d-a309-00e90cd3decf
+Content-Type: application/json
+
+{
+  "title": "liste 2",
+  "description": "aciklama 2",
+  "taskIds": [],
+  "userIds": ["a08b7f5f-4179-44c5-9d72-d40c5cc30d89"]
+}
+
+
+### DELETE tasklist 3
+DELETE http://localhost:8080/tasklist/delete/8dfd1a04-2ad2-46a7-ae4e-d51f71e6ed97

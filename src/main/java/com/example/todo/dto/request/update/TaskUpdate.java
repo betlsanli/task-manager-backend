@@ -1,6 +1,7 @@
 package com.example.todo.dto.request.update;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -12,10 +13,9 @@ public record TaskUpdate(
         String priority,
         String status,
         LocalDateTime dueDate,
-        LocalDateTime lastModifiedAt,
         LocalDateTime startedAt,
         LocalDateTime completedAt,
         UUID parentId,
-        @NotEmpty(message = "List id cannot be null or empty")
+        @NotNull(message = "List id cannot be null or empty")
         UUID listId
 ) {}

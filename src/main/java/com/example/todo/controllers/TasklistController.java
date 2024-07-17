@@ -37,7 +37,17 @@ public class TasklistController {
         this.tasklistCreateService = tasklistCreateService;
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/all-list")
+    public ResponseEntity<List<Tasklist>> getAllTasklists() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(tasklistService.getAll());
+        }catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/of-user/{userId}")
     public ResponseEntity<List<Tasklist>> getAllTasklistByUserId(@PathVariable UUID userId) {
         try {
             if(userId == null)
@@ -74,7 +84,7 @@ public class TasklistController {
         }
     }
 
-    @PostMapping("create-tasklist")
+    @PostMapping("/create-tasklist")
     public ResponseEntity<Tasklist> createTasklist(@RequestBody @Valid TasklistCreate tasklist) {
         try {
             if(tasklist == null)

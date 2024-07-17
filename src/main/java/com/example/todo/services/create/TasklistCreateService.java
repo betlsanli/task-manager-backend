@@ -10,6 +10,7 @@ import com.example.todo.entities.Tasklist;
 import com.example.todo.repositories.TasklistRepository;
 import com.example.todo.services.AppUserService;
 import com.example.todo.services.TaskService;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
@@ -32,15 +33,20 @@ public class TasklistCreateService {
         this.taskService = taskService;
     }
 
+    @Transactional
     public Tasklist createTasklist(TasklistCreate tasklist) {
         List<AppUser> userList = appUserService.getAllByIds(tasklist.userIds());
         if (userList.isEmpty()) {
             throw new IllegalArgumentException("There must be at least one user of the list.");
         }
         Tasklist tl = tasklistCreateMapper.toEntity(tasklist, userList);
+        for (AppUser user : userList) {
+            user.addTasklist(tl);
+        }
         return tasklistRepository.save(tl);
     }
 
+    @Transactional
     public Tasklist updateTasklist(UUID listId, TasklistUpdate tasklist) {
 
         tasklistRepository.findById(listId).orElseThrow();
@@ -49,6 +55,10 @@ public class TasklistCreateService {
         if (userList.isEmpty()) {
             throw new IllegalArgumentException("There must be at least one user of the list.");
         }
-        return tasklistUpdateMapper.toEntity(tasklist,listId,tasks,userList);
+        Tasklist newTasklist = tasklistUpdateMapper.toEntity(tasklist,listId,tasks,userList);
+        for (AppUser user : userList) {
+            user.addTasklist(newTasklist);
+        }
+        return tasklistRepository.save(newTasklist);
     }
 }

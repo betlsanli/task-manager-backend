@@ -1,17 +1,12 @@
 package com.example.todo.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper=true)
@@ -30,10 +25,34 @@ public class Tasklist extends BaseEntity{
 
     @JsonIgnore
     @OneToMany(mappedBy = "belongsTo")
-    private List<Task> tasks;
+    @Builder.Default
+    private List<Task> tasks = new ArrayList<>();
 
-    @JsonIgnore
-    @ManyToMany(mappedBy = "tasklists")
+
     @NotEmpty
-    private List<AppUser> users;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL) //owner of the relationship
+    @JoinTable(name = "user_tasklist",
+            joinColumns = {
+                    @JoinColumn(name = "tasklist_id")
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = "user_id")
+            }
+    )
+    @JsonIgnore
+    @Builder.Default
+    private List<AppUser> users = new ArrayList<>();
+
+    public void addUser(AppUser user) {
+        if (!users.contains(user)) {
+            users.add(user);
+        }
+    }
+
+    public void addTask(Task task) {
+        if (!tasks.contains(task)) {
+            tasks.add(task);
+        }
+    }
+
 }
