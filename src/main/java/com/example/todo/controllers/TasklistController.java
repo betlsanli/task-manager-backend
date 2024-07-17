@@ -7,19 +7,27 @@ import com.example.todo.entities.Tasklist;
 import com.example.todo.services.AppUserService;
 import com.example.todo.services.TasklistService;
 import com.example.todo.services.create.TasklistCreateService;
+import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/tasklist")
+@Validated
 public class TasklistController {
 
     private final TasklistService tasklistService;
     private final AppUserService appUserService;
-   // private static final Logger log = LoggerFactory.getLogger(TasklistController.class);
+    private static final Logger log = LoggerFactory.getLogger(TasklistController.class);
     private final TasklistCreateService tasklistCreateService;
 
     @Autowired
@@ -30,41 +38,95 @@ public class TasklistController {
     }
 
     @GetMapping("/{userId}")
-    public List<Tasklist> getAllTasklistByUserId(@PathVariable UUID userId) {
-        AppUser user = appUserService.getById(userId);
-        return tasklistService.getAllByUser(user);
+    public ResponseEntity<List<Tasklist>> getAllTasklistByUserId(@PathVariable UUID userId) {
+        try {
+            if(userId == null)
+                throw new IllegalArgumentException("User id cannot be null");
+            AppUser user = appUserService.getById(userId);
+            return ResponseEntity.status(HttpStatus.OK).body(tasklistService.getAllByUser(user));
+        }catch (IllegalArgumentException iae){
+            log.error(iae.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }catch(NoSuchElementException nsee){
+            log.error(nsee.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }catch(Exception ex){
+            log.error(ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
-    // duplicate of "/task/{listId}"
-
-//    @GetMapping("/{listId}/tasks")
-//    public List<Task> getAllTaskByListId(@PathVariable UUID listId) {
-//        Tasklist tl = tasklistService.getById(listId).orElse(null);
-//        if(tl == null) {
-//            log.error("Tasklist not found");
-//            return null;
-//        }
-//        return taskService.getAllByTasklist(tl);
-//    }
-
     @GetMapping("/{listId}")
-    public Tasklist getTasklistByListId(@PathVariable UUID listId) {
-        return tasklistService.getById(listId);
+    public ResponseEntity<Tasklist> getTasklistByListId(@PathVariable UUID listId) {
+        try {
+            if(listId == null)
+                throw new IllegalArgumentException("List id cannot be null");
+            return ResponseEntity.status(HttpStatus.OK).body(tasklistService.getById(listId));
+        }catch (IllegalArgumentException iae){
+            log.error(iae.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }catch(NoSuchElementException nsee){
+            log.error(nsee.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }catch(Exception ex){
+            log.error(ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PostMapping("create-tasklist")
-    public Tasklist createTasklist(@RequestBody TasklistCreate tasklist) {
-        return tasklistCreateService.createTasklist(tasklist);
+    public ResponseEntity<Tasklist> createTasklist(@RequestBody @Valid TasklistCreate tasklist) {
+        try {
+            if(tasklist == null)
+                throw new IllegalArgumentException("Tasklist cannot be null");
+            return ResponseEntity.status(HttpStatus.CREATED).body(tasklistCreateService.createTasklist(tasklist));
+        }catch (IllegalArgumentException iae){
+            log.error(iae.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }catch(NoSuchElementException nsee){
+            log.error(nsee.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }catch(Exception ex){
+            log.error(ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @DeleteMapping("/delete/{listId}")
-    public void deleteTasklist(@PathVariable UUID listId) {
-        tasklistService.deleteById(listId);
+    public ResponseEntity<Boolean> deleteTasklist(@PathVariable UUID listId) {
+        try {
+            if (listId == null)
+                throw new IllegalArgumentException("List id cannot be null");
+            boolean isDeleted = tasklistService.deleteById(listId);
+            return ResponseEntity.status(HttpStatus.OK).body(isDeleted);
+        }catch (IllegalArgumentException iae){
+            log.error(iae.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }catch(NoSuchElementException nsee){
+            log.error(nsee.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }catch(Exception ex){
+            log.error(ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PutMapping("/edit/{listId}")
-    public Tasklist updateTasklist(@PathVariable UUID listId, @RequestBody TasklistUpdate tasklist) {
-        return tasklistCreateService.updateTasklist(listId, tasklist);
+    public ResponseEntity<Tasklist> updateTasklist(@PathVariable UUID listId, @RequestBody @Valid TasklistUpdate tasklist) {
+        try {
+            if (listId == null || tasklist == null)
+                throw new IllegalArgumentException("Tasklist cannot be null");
+            return ResponseEntity.status(HttpStatus.CREATED).body(tasklistCreateService.updateTasklist(listId, tasklist));
+        }catch (IllegalArgumentException iae){
+            log.error(iae.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }catch(NoSuchElementException nsee){
+            log.error(nsee.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }catch(Exception ex){
+            log.error(ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
 }

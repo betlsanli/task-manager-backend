@@ -48,7 +48,7 @@ public class Task extends BaseEntity {
     private Task parentTask;
 
     @ManyToOne
-    @JoinColumn(name = "list_id")
+    @JoinColumn(name = "list_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Tasklist belongsTo;
 }

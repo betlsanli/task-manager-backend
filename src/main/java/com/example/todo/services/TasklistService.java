@@ -35,9 +35,10 @@ public class TasklistService {
         return tasklistRepository.findAllById(ids);
     }
 
-    public void deleteById(UUID id) {
+    public boolean deleteById(UUID id) {
         getById(id);
         tasklistRepository.deleteById(id);
+        return true;
     }
 
 }

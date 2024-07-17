@@ -57,9 +57,10 @@ public class TaskService {
         return taskRepository.findAllById(ids);
     }
 
-    public void deleteById(UUID id) {
+    public boolean deleteById(UUID id) {
         getById(id);
         taskRepository.deleteById(id);
+        return true;
     }
 
 }

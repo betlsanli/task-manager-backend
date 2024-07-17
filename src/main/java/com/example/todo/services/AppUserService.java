@@ -30,8 +30,9 @@ public class AppUserService {
         return appUserRepository.findAllById(ids);
     }
 
-    public void deleteById(UUID id) {
+    public boolean deleteById(UUID id) {
         getById(id);
         appUserRepository.deleteById(id);
+        return true;
     }
 }

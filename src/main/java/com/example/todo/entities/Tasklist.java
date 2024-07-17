@@ -5,6 +5,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -33,5 +34,6 @@ public class Tasklist extends BaseEntity{
 
     @JsonIgnore
     @ManyToMany(mappedBy = "tasklists")
+    @NotEmpty
     private List<AppUser> users;
 }
