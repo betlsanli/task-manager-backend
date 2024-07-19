@@ -26,7 +26,7 @@ public class TaskService {
     }
 
     public List<Task> getAll() {
-        return taskRepository.findAll();
+        return taskRepository.findAllByParentTaskIsNull();
     }
 
     public Task getById(UUID id) {

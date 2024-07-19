@@ -17,6 +17,8 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
     List<Task> findAllByTitleContainingIgnoreCase(String title);
     List<Task> findAllByDescriptionContainingIgnoreCase(String description);
 
+    List<Task> findAllByParentTaskIsNull();
+
     List<Task> findAllByBelongsTo(Tasklist tasklist);
     List<Task> findAllByBelongsToIn(List<Tasklist> tasklists);
     List<Task> findAllByParentTask(Task parenTask);
