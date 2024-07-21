@@ -1,14 +1,13 @@
 package com.example.todo.repositories;
 
-import com.example.todo.entities.Priority;
-import com.example.todo.entities.Status;
+import com.example.todo.enums.Priority.Priority;
+import com.example.todo.enums.Status.Status;
 import com.example.todo.entities.Task;
 import com.example.todo.entities.Tasklist;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface TaskRepository extends JpaRepository<Task, UUID> {

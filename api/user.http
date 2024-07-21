@@ -38,7 +38,7 @@ Content-Type: application/json
 }
 
 ### PUT user 1
-PUT http://localhost:8080/user/edit/59370a6e-ea63-47f6-8047-08ddb67b40f9
+PUT http://localhost:8080/user/edit/d04a8042-8335-4553-934d-2173a7f770ac
 Content-Type: application/json
 
 {
@@ -50,7 +50,7 @@ Content-Type: application/json
 }
 
 ### PUT user 2
-PUT http://localhost:8080/user/edit/a08b7f5f-4179-44c5-9d72-d40c5cc30d89
+PUT http://localhost:8080/user/edit/f50e3dad-afe5-409a-8325-4ce6b88f214d
 Content-Type: application/json
 
 {
@@ -62,7 +62,7 @@ Content-Type: application/json
 }
 
 ### PUT user 3
-PUT http://localhost:8080/user/edit/9e3cb0a7-63f6-4141-b384-a2a276728ed7
+PUT http://localhost:8080/user/edit/2a31bfdd-fb08-4b14-8788-70bd88182578
 Content-Type: application/json
 
 {

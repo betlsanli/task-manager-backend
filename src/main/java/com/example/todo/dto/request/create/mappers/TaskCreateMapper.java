@@ -1,8 +1,8 @@
 package com.example.todo.dto.request.create.mappers;
 
 import com.example.todo.dto.request.create.TaskCreate;
-import com.example.todo.entities.Priority;
-import com.example.todo.entities.Status;
+import com.example.todo.enums.Priority.Priority;
+import com.example.todo.enums.Status.Status;
 import com.example.todo.entities.Task;
 import com.example.todo.entities.Tasklist;
 import org.springframework.stereotype.Service;
@@ -13,8 +13,8 @@ public class TaskCreateMapper {
         return Task.builder()
                 .title(dto.title())
                 .description(dto.description())
-                .priority(dto.priority() != null ? Priority.valueOf(dto.priority()) : Priority.Orta)
-                .status(dto.status() != null ? Status.valueOf(dto.status()) : Status.Yapılacak)
+                .priority(dto.priority() != null ? Priority.valueOf(dto.priority()) : Priority.MEDIUM)
+                .status(dto.status() != null ? Status.valueOf(dto.status()) : Status.TO_DO)
                 .dueDate(dto.dueDate())
                 .parentTask(parentTask)
                 .belongsTo(belongTo)

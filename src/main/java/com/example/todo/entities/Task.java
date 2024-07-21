@@ -1,7 +1,8 @@
 package com.example.todo.entities;
 
+import com.example.todo.enums.Priority.Priority;
+import com.example.todo.enums.Status.Status;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,13 +28,11 @@ public class Task extends BaseEntity {
     @Column(length = 512)
     private String description;
 
-    @Enumerated(EnumType.STRING)
     @Builder.Default
-    private Priority priority = Priority.Orta;
+    private Priority priority = Priority.MEDIUM;
 
-    @Enumerated(EnumType.STRING)
     @Builder.Default
-    private Status status = Status.Yapılacak;
+    private Status status = Status.TO_DO;
 
     private LocalDateTime dueDate;
 

@@ -15,7 +15,7 @@ Content-Type: application/json
 
 {
   "title": "task 1",
-  "listId": "ba03feb5-3719-48cc-ac81-bf5be27a0816"
+  "listId": "de37d624-5f33-400e-89a3-cde2beebe8b0"
 }
 
 ### POST task 1.1
@@ -25,11 +25,11 @@ Content-Type: application/json
 {
   "title": "task 1.1",
   "description": "task 1 alt gorev",
-  "listId": "ba03feb5-3719-48cc-ac81-bf5be27a0816",
-  "priority": "Yüksek",
-  "status": "Yapılıyor",
+  "listId": "de37d624-5f33-400e-89a3-cde2beebe8b0",
+  "priority": "HIGH",
+  "status": "TO_DO",
   "dueDate": "2024-07-24T15:30:00",
-  "parentId": "1d9d5f67-c03d-45b9-94c1-3b4dd024762a"
+  "parentId": "bdab46f0-4c39-42ef-a6bc-52ca5fb9e845"
 }
 
 ### POST task 2
@@ -39,9 +39,9 @@ Content-Type: application/json
 {
   "title": "task 2",
   "description": "task aciklama 2",
-  "listId": "dff29c18-a939-413d-a309-00e90cd3decf",
-  "priority": "Düşük",
-  "status": "Yapılacak",
+  "listId": "de37d624-5f33-400e-89a3-cde2beebe8b0",
+  "priority": "LOW",
+
   "dueDate": "2024-07-30T15:30:00",
   "parentId": ""
 }
@@ -51,12 +51,10 @@ POST http://localhost:8080/task/create-task
 Content-Type: application/json
 
 {
-  "title": "task 2.1",
+  "title": "task 2.2",
   "description": "task 2 alt gorev",
-  "listId": "dff29c18-a939-413d-a309-00e90cd3decf",
-  "priority": "Düşük",
-  "status": "Yapılacak",
-  "parentId": "53fdb12e-112e-477a-81b4-fa21d8d9ce49",
+  "listId": "de37d624-5f33-400e-89a3-cde2beebe8b0",
+  "parentId": "2d2a98dd-54a1-49c3-a4f3-9e0a1bf74ab6",
   "dueDate": "2024-07-20T15:30:00"
 }
 
@@ -66,20 +64,20 @@ Content-Type: application/json
 
 {
   "title": "task 3",
-  "listId": "dff29c18-a939-413d-a309-00e90cd3decf"
+  "listId": "de37d624-5f33-400e-89a3-cde2beebe8b0"
 }
 
 ### PUT task 1
-PUT http://localhost:8080/task/edit/1d9d5f67-c03d-45b9-94c1-3b4dd024762a
+PUT http://localhost:8080/task/edit/
 Content-Type: application/json
 
 {
   "title": "task 1",
   "description": "aciklama 1",
   "listId": "ba03feb5-3719-48cc-ac81-bf5be27a0816",
-  "priority": "Yüksek",
+  "priority": "HIGH",
   "startedAt": "2024-07-17T15:30:00"
 }
 
 ### DELETE task 1
-DELETE http://localhost:8080/task/delete/1d9d5f67-c03d-45b9-94c1-3b4dd024762a
+DELETE http://localhost:8080/task/delete/
