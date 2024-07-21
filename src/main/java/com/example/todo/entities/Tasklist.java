@@ -39,7 +39,7 @@ public class Tasklist extends BaseEntity{
                     @JoinColumn(name = "user_id")
             }
     )
-    @JsonIgnore
+    //@JsonIgnore
     @Builder.Default
     private List<AppUser> users = new ArrayList<>();
 
