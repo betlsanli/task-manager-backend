@@ -19,8 +19,8 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
 
     List<Task> findAllByParentTaskIsNull();
 
-    List<Task> findAllByBelongsTo(Tasklist tasklist);
-    List<Task> findAllByBelongsToIn(List<Tasklist> tasklists);
+    List<Task> findAllByBelongsToAndParentTaskIsNull(Tasklist tasklist);
+    List<Task> findAllByBelongsToInAndParentTaskIsNull(List<Tasklist> tasklists);
     List<Task> findAllByParentTask(Task parenTask);
 
 

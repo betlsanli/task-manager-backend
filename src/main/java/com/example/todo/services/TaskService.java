@@ -40,13 +40,13 @@ public class TaskService {
 
     public List<Task> getAllByTasklist(UUID listId) {
         Tasklist tasklist = tasklistService.getById(listId);
-        return taskRepository.findAllByBelongsTo(tasklist);
+        return taskRepository.findAllByBelongsToAndParentTaskIsNull(tasklist);
     }
 
     public List<Task> getAllByUser(UUID userID) {
         AppUser user = appUserService.getById(userID);
         List<Tasklist> tasklists = tasklistService.getAllByUser(user);
-        return taskRepository.findAllByBelongsToIn(tasklists);
+        return taskRepository.findAllByBelongsToInAndParentTaskIsNull(tasklists);
     }
 
     public List<Task> getAllByParentTask(Task parent) {
