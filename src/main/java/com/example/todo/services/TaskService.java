@@ -1,5 +1,7 @@
 package com.example.todo.services;
 
+import com.example.todo.dto.response.TaskResponseDTO;
+import com.example.todo.dto.response.mappers.TaskResponseDTOMapper;
 import com.example.todo.entities.AppUser;
 import com.example.todo.entities.Task;
 import com.example.todo.entities.Tasklist;
@@ -17,20 +19,22 @@ public class TaskService {
     private final AppUserService appUserService;
     private final TasklistService tasklistService;
    // private static final Logger log = LoggerFactory.getLogger(TaskService.class);
+    private final TaskResponseDTOMapper taskResponseDTOMapper;
 
     @Autowired
-    public TaskService(TaskRepository taskRepository, AppUserService appUserService, TasklistService tasklistService) {
+    public TaskService(TaskRepository taskRepository, AppUserService appUserService, TasklistService tasklistService, TaskResponseDTOMapper taskResponseDTOMapper) {
         this.taskRepository = taskRepository;
         this.appUserService = appUserService;
         this.tasklistService = tasklistService;
+        this.taskResponseDTOMapper = taskResponseDTOMapper;
     }
 
-    public List<Task> getAll() {
-        return taskRepository.findAllByParentTaskIsNull();
+    public List<TaskResponseDTO> getAll() {
+        return taskRepository.findAllByParentTaskIsNull().stream().map(taskResponseDTOMapper::toDTO).toList();
     }
 
-    public Task getById(UUID id) {
-        return taskRepository.findById(id).orElseThrow();
+    public TaskResponseDTO getById(UUID id) {
+        return taskRepository.findById(id).stream().map(taskResponseDTOMapper::toDTO).findFirst().orElseThrow();
     }
 
 //    public List<Task> getAllByUser(AppUser user) {
@@ -38,19 +42,19 @@ public class TaskService {
 //        return taskRepository.findAllByBelongsToIn(tasklists);
 //    }
 
-    public List<Task> getAllByTasklist(UUID listId) {
+    public List<TaskResponseDTO> getAllByTasklist(UUID listId) {
         Tasklist tasklist = tasklistService.getById(listId);
-        return taskRepository.findAllByBelongsToAndParentTaskIsNull(tasklist);
+        return taskRepository.findAllByBelongsToAndParentTaskIsNull(tasklist).stream().map(taskResponseDTOMapper::toDTO).toList();
     }
 
-    public List<Task> getAllByUser(UUID userID) {
+    public List<TaskResponseDTO> getAllByUser(UUID userID) {
         AppUser user = appUserService.getById(userID);
         List<Tasklist> tasklists = tasklistService.getAllByUser(user);
-        return taskRepository.findAllByBelongsToInAndParentTaskIsNull(tasklists);
+        return taskRepository.findAllByBelongsToInAndParentTaskIsNull(tasklists).stream().map(taskResponseDTOMapper::toDTO).toList();
     }
 
-    public List<Task> getAllByParentTask(Task parent) {
-        return taskRepository.findAllByParentTask(parent);
+    public List<TaskResponseDTO> getAllByParentTask(Task parent) {
+        return taskRepository.findAllByParentTask(parent).stream().map(taskResponseDTOMapper::toDTO).toList();
     }
 
     public List<Task> getAllByIds(List<UUID> ids) {

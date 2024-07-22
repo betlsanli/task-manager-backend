@@ -52,7 +52,7 @@ Content-Type: application/json
 
 {
   "title": "task 2.2",
-  "description": "task 2 alt gorev",
+  "description": "task 2 alt gorev 2",
   "listId": "de37d624-5f33-400e-89a3-cde2beebe8b0",
   "parentId": "2d2a98dd-54a1-49c3-a4f3-9e0a1bf74ab6",
   "dueDate": "2024-07-20T15:30:00"

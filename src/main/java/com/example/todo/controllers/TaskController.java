@@ -2,6 +2,7 @@ package com.example.todo.controllers;
 
 import com.example.todo.dto.request.create.TaskCreate;
 import com.example.todo.dto.request.update.TaskUpdate;
+import com.example.todo.dto.response.TaskResponseDTO;
 import com.example.todo.entities.Task;
 import com.example.todo.services.TaskService;
 import com.example.todo.services.create.TaskCreateService;
@@ -35,7 +36,7 @@ public class TaskController {
     }
 
     @GetMapping("/all-task")
-    public ResponseEntity<List<Task>> getAllTask() {
+    public ResponseEntity<List<TaskResponseDTO>> getAllTask() {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(taskService.getAll());
         }catch (Exception e){
@@ -45,7 +46,7 @@ public class TaskController {
     }
 
     @GetMapping("/of-user/{userId}")
-    public ResponseEntity<List<Task>> getAllTaskByUser(@PathVariable UUID userId) {
+    public ResponseEntity<List<TaskResponseDTO>> getAllTaskByUser(@PathVariable UUID userId) {
         try {
             if(userId == null)
                 throw new IllegalArgumentException("User id cannot be null");
@@ -65,7 +66,7 @@ public class TaskController {
     // duplicate of "/tasklist/{listId}/tasks"
 
     @GetMapping("/of-list/{listId}")
-    public ResponseEntity<List<Task>> getAllTaskByTasklist(@PathVariable UUID listId) {
+    public ResponseEntity<List<TaskResponseDTO>> getAllTaskByTasklist(@PathVariable UUID listId) {
         try {
             if(listId == null)
                 throw new IllegalArgumentException("List id cannot be null");
@@ -83,7 +84,7 @@ public class TaskController {
     }
 
     @GetMapping("/{taskId}")
-    public ResponseEntity<Task> getTaskById(@PathVariable UUID taskId) {
+    public ResponseEntity<TaskResponseDTO> getTaskById(@PathVariable UUID taskId) {
         try {
             if(taskId == null)
                 throw new IllegalArgumentException("Task id cannot be null");
@@ -101,7 +102,7 @@ public class TaskController {
     }
 
     @PostMapping("/create-task")
-    public ResponseEntity<Task> createTask(@RequestBody @Valid TaskCreate taskCreate) {
+    public ResponseEntity<TaskResponseDTO> createTask(@RequestBody @Valid TaskCreate taskCreate) {
         try {
             if(taskCreate == null)
                 throw new IllegalArgumentException("TaskCreate cannot be null");
@@ -138,7 +139,7 @@ public class TaskController {
     }
 
     @PutMapping("/edit/{taskId}")
-    public ResponseEntity<Task> updateTask(@PathVariable UUID taskId, @RequestBody @Valid TaskUpdate taskUpdate) {
+    public ResponseEntity<TaskResponseDTO> updateTask(@PathVariable UUID taskId, @RequestBody @Valid TaskUpdate taskUpdate) {
         try {
             if(taskId == null || taskUpdate == null)
                 throw new IllegalArgumentException("Parameters cannot be null");

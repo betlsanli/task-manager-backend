@@ -4,6 +4,8 @@ import com.example.todo.dto.request.create.TaskCreate;
 import com.example.todo.dto.request.create.mappers.TaskCreateMapper;
 import com.example.todo.dto.request.update.TaskUpdate;
 import com.example.todo.dto.request.update.mappers.TaskUpdateMapper;
+import com.example.todo.dto.response.TaskResponseDTO;
+import com.example.todo.dto.response.mappers.TaskResponseDTOMapper;
 import com.example.todo.entities.Task;
 import com.example.todo.entities.Tasklist;
 import com.example.todo.repositories.TaskRepository;
@@ -19,16 +21,18 @@ public class TaskCreateService {
     private final TasklistService tasklistService;
     private final TaskCreateMapper taskCreateMapper;
     private final TaskUpdateMapper taskUpdateMapper;
+    private final TaskResponseDTOMapper taskResponseDTOMapper;
 
-    public TaskCreateService(TaskRepository taskRepository, TasklistService tasklistService, TaskCreateMapper taskCreateMapper, TaskUpdateMapper taskUpdateMapper) {
+    public TaskCreateService(TaskRepository taskRepository, TasklistService tasklistService, TaskCreateMapper taskCreateMapper, TaskUpdateMapper taskUpdateMapper, TaskResponseDTOMapper taskResponseDTOMapper) {
         this.taskRepository = taskRepository;
         this.tasklistService = tasklistService;
         this.taskCreateMapper = taskCreateMapper;
         this.taskUpdateMapper = taskUpdateMapper;
+        this.taskResponseDTOMapper = taskResponseDTOMapper;
     }
 
     @Transactional
-    public Task createTask(TaskCreate taskCreate) {
+    public TaskResponseDTO createTask(TaskCreate taskCreate) {
         Task parentTask = null;
         if(taskCreate.parentId() != null)
             parentTask = taskRepository.findById(taskCreate.parentId()).orElse(null);
@@ -38,11 +42,12 @@ public class TaskCreateService {
         if(parentTask != null) {
             parentTask.addSubTask(newTask);
         }
-        return taskRepository.save(newTask);
+        taskRepository.save(newTask);
+        return taskResponseDTOMapper.toDTO(newTask);
     }
 
     @Transactional
-    public Task updateTask(UUID taskId, TaskUpdate taskUpdate) {
+    public TaskResponseDTO updateTask(UUID taskId, TaskUpdate taskUpdate) {
         taskRepository.findById(taskId).orElseThrow();
         Task parentTask = null;
         if(taskUpdate.parentId() != null)
@@ -53,6 +58,7 @@ public class TaskCreateService {
         if(parentTask != null) {
             parentTask.addSubTask(newTask);
         }
-        return taskRepository.save(newTask);
+        taskRepository.save(newTask);
+        return taskResponseDTOMapper.toDTO(newTask);
     }
 }
