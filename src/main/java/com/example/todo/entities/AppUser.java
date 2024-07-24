@@ -36,12 +36,40 @@ public class AppUser extends  BaseEntity{
     @JsonIgnore
     private List<Tasklist> tasklists;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "assignee",fetch = FetchType.LAZY)
+    private List<Task> assignedTasks;
+
     public void addTasklist(Tasklist tasklist){
         if(this.tasklists == null){
             this.tasklists = new ArrayList<>();
         }
         if(!this.tasklists.contains(tasklist)){
             this.tasklists.add(tasklist);
+        }
+    }
+    public void removeTasklist(Tasklist tasklist){
+        if(this.tasklists == null){
+            this.tasklists = new ArrayList<>();
+        }
+        if(this.tasklists.contains(tasklist)){
+            this.tasklists.remove(tasklist);
+        }
+    }
+    public void addAssignedTask(Task task){
+        if(this.assignedTasks == null){
+            this.assignedTasks = new ArrayList<>();
+        }
+        if(!this.assignedTasks.contains(task)){
+            this.assignedTasks.add(task);
+        }
+    }
+    public void removeAssignedTask(Task task){
+        if(this.assignedTasks == null){
+            this.assignedTasks = new ArrayList<>();
+        }
+        if(this.assignedTasks.contains(task)){
+            this.assignedTasks.remove(task);
         }
     }
 }

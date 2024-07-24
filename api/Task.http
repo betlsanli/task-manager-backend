@@ -7,7 +7,7 @@ GET http://localhost:8080/task/of-user/a08b7f5f-4179-44c5-9d72-d40c5cc30d89
 GET http://localhost:8080/task/of-list/dff29c18-a939-413d-a309-00e90cd3decf
 
 ### GET task detail
-GET http://localhost:8080/task/53fdb12e-112e-477a-81b4-fa21d8d9ce49
+GET http://localhost:8080/task/bdab46f0-4c39-42ef-a6bc-52ca5fb9e845
 
 ### POST task 1
 POST http://localhost:8080/task/create-task

@@ -1,5 +1,7 @@
 package com.example.todo.dto.response;
 
+import com.example.todo.entities.AppUser;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -17,5 +19,6 @@ public record TaskResponseDTO (
         LocalDateTime lastModifiedAt,
         UUID parentId,
         UUID listId,
-        List<TaskResponseDTO> subTasks
+        List<TaskResponseDTO> subTasks,
+        AppUser assignee
 ){}

@@ -3,6 +3,7 @@ package com.example.todo.entities;
 import com.example.todo.enums.Priority.Priority;
 import com.example.todo.enums.Status.Status;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -42,12 +43,15 @@ public class Task extends BaseEntity {
     @Column(insertable = false)
     private LocalDateTime startedAt;
 
-    @JsonManagedReference
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "assignee_id")
+    private AppUser assignee;
+
     @OneToMany(mappedBy = "parentTask")
     @Builder.Default
     private List<Task> subTasks = new ArrayList<>();
 
-    @JsonBackReference
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "parent_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -61,6 +65,11 @@ public class Task extends BaseEntity {
     public void addSubTask(Task subTask) {
         if (!subTasks.contains(subTask)) {
             this.subTasks.add(subTask);
+        }
+    }
+    public void removeSubTask(Task subTask) {
+        if (subTasks.contains(subTask)) {
+            this.subTasks.remove(subTask);
         }
     }
 }

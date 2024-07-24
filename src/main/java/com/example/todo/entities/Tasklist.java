@@ -28,7 +28,6 @@ public class Tasklist extends BaseEntity{
     @Builder.Default
     private List<Task> tasks = new ArrayList<>();
 
-
     @NotEmpty
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL) //owner of the relationship
     @JoinTable(name = "user_tasklist",
@@ -48,11 +47,15 @@ public class Tasklist extends BaseEntity{
             users.add(user);
         }
     }
-
     public void addTask(Task task) {
         if (!tasks.contains(task)) {
             tasks.add(task);
         }
     }
-
+    public void removeTask(Task task) {
+        tasks.remove(task);
+    }
+    public void removeUser(AppUser user) {
+        users.remove(user);
+    }
 }

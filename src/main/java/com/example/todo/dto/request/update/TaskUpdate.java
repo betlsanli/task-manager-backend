@@ -17,5 +17,6 @@ public record TaskUpdate(
         LocalDateTime completedAt,
         UUID parentId,
         @NotNull(message = "List id cannot be null or empty")
-        UUID listId
+        UUID listId,
+        UUID assigneeId
 ) {}

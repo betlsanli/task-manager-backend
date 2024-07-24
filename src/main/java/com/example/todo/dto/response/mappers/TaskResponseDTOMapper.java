@@ -22,7 +22,8 @@ public class TaskResponseDTOMapper {
                 task.getLastModifiedAt(),
                 (task.getParentTask() != null ? task.getParentTask().getId() : null),
                 task.getBelongsTo().getId(),
-                task.getSubTasks().stream().map(this::toDTO).collect(Collectors.toList())
+                task.getSubTasks().stream().map(this::toDTO).collect(Collectors.toList()),
+                task.getAssignee()
         );
     }
 }
