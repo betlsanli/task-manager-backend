@@ -43,11 +43,17 @@ public class Task extends BaseEntity {
     @Column(insertable = false)
     private LocalDateTime startedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "assignee_id")
-    private AppUser assignee;
 
-    @OneToMany(mappedBy = "parentTask")
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "task_user",
+            joinColumns = @JoinColumn(name = "task_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    @Builder.Default
+    private List<AppUser> assignees = new ArrayList<>();
+
+    @OneToMany(mappedBy = "parentTask", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Task> subTasks = new ArrayList<>();
 
@@ -61,6 +67,24 @@ public class Task extends BaseEntity {
     @JoinColumn(name = "list_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Tasklist belongsTo;
+
+    @PrePersist
+    private void onCreate() {
+        belongsTo.addTask(this);
+        if(parentTask != null)
+            parentTask.addSubTask(this);
+        for(AppUser assignee : assignees){
+            assignee.addAssignedTask(this);
+        }
+    }
+    @PreUpdate
+    private void onUpdate() {
+        if(parentTask != null)
+            parentTask.addSubTask(this);
+        for(AppUser assignee : assignees){
+            assignee.addAssignedTask(this);
+        }
+    }
 
     public void addSubTask(Task subTask) {
         if (!subTasks.contains(subTask)) {

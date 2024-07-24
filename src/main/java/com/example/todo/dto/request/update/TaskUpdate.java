@@ -1,9 +1,11 @@
 package com.example.todo.dto.request.update;
 
+import com.example.todo.entities.AppUser;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public record TaskUpdate(
@@ -17,6 +19,5 @@ public record TaskUpdate(
         LocalDateTime completedAt,
         UUID parentId,
         @NotNull(message = "List id cannot be null or empty")
-        UUID listId,
-        UUID assigneeId
+        List<UUID> assignees
 ) {}

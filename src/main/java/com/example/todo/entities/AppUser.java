@@ -29,16 +29,15 @@ public class AppUser extends  BaseEntity{
     @Column(nullable = false, length = 128)
     private String lastName;
 
-    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE,CascadeType.REFRESH})
+    @ManyToMany(mappedBy = "users")
     @JsonIgnore
     @Builder.Default
     private List<Tasklist> tasklists = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "assignee",fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE,CascadeType.REFRESH})
+    @ManyToMany(mappedBy = "assignees", fetch = FetchType.LAZY)
     @Builder.Default
     private List<Task> assignedTasks = new ArrayList<>();
-
 
     @PreUpdate
     public void onUpdate(){

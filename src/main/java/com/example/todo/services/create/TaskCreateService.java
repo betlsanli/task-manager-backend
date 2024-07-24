@@ -14,6 +14,8 @@ import com.example.todo.services.AppUserService;
 import com.example.todo.services.TasklistService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -37,15 +39,20 @@ public class TaskCreateService {
 
     @Transactional
     public TaskResponseDTO createTask(TaskCreate taskCreate) {
+
         Task parentTask = null;
         if(taskCreate.parentId() != null)
             parentTask = taskRepository.findById(taskCreate.parentId()).orElse(null);
+
+        List<AppUser> assignees = appUserService.getAllByIds(taskCreate.assignees());
+
         Tasklist tl = tasklistService.getById(taskCreate.listId());
-        Task newTask = taskCreateMapper.toEntity(taskCreate, parentTask, tl);
-        tl.addTask(newTask);
-        if(parentTask != null) {
-            parentTask.addSubTask(newTask);
-        }
+
+        Task newTask = taskCreateMapper.toEntity(taskCreate);
+        newTask.setAssignees(assignees);
+        newTask.setParentTask(parentTask);
+        newTask.setBelongsTo(tl);
+
         taskRepository.save(newTask);
         return taskResponseDTOMapper.toDTO(newTask);
     }
@@ -59,30 +66,32 @@ public class TaskCreateService {
         if(taskUpdate.parentId() != null)
             newParent = taskRepository.findById(taskUpdate.parentId()).orElse(null);
 
-        AppUser oldAssignee = oldTask.getAssignee();
-        AppUser newAssignee = null;
-        if(taskUpdate.assigneeId() != null)
-            newAssignee = appUserService.getById(taskUpdate.assigneeId());
+        List<AppUser> oldAssignees = oldTask.getAssignees();
+        List<AppUser> newAssignees = appUserService.getAllByIds(taskUpdate.assignees());
 
-        Tasklist oldList = oldTask.getBelongsTo();
-        Tasklist newList = tasklistService.getById(taskUpdate.listId());
+        handleAssigneeUpdate(oldAssignees,newAssignees,oldTask);
+        handleParentUpdate(oldParent,newParent,oldTask);
 
-        Task newTask = taskUpdateMapper.toEntity(taskUpdate, taskId, newParent, newList, newAssignee);
+        Task newTask = taskUpdateMapper.toEntity(taskUpdate);
+        newTask.setId(taskId);
+        newTask.setAssignees(newAssignees);
+        newTask.setParentTask(newParent);
 
-        if(oldList.getId() != newList.getId()) {
-            oldList.removeTask(oldTask);
-            newList.addTask(newTask);
-        }
-        if(oldAssignee.getId() != newAssignee.getId()) {
-            oldAssignee.removeAssignedTask(oldTask);
-            newAssignee.addAssignedTask(newTask);
-        }
-        if(oldParent.getId() != newParent.getId()) {
-            oldParent.removeSubTask(oldTask);
-            if(newParent != null)
-                newParent.addSubTask(newTask);
-        }
         taskRepository.save(newTask);
         return taskResponseDTOMapper.toDTO(newTask);
+    }
+
+    public void handleParentUpdate(Task oldParent, Task newParent, Task oldTask) {
+        if(oldParent.getId() != newParent.getId()) {
+            oldParent.removeSubTask(oldTask);
+        }
+    }
+
+    public void handleAssigneeUpdate(List<AppUser> oldAssignees, List<AppUser> newAssignees, Task oldTask) {
+        for(AppUser oldAssignee : oldAssignees) {
+            if(!newAssignees.contains(oldAssignee)) {
+                oldAssignee.removeAssignedTask(oldTask);
+            }
+        }
     }
 }

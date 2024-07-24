@@ -13,9 +13,8 @@ import java.util.UUID;
 
 @Service
 public class TaskUpdateMapper {
-    public Task toEntity(TaskUpdate dto, UUID taskId, Task parentTask, Tasklist belongsTo, AppUser assignee){
+    public Task toEntity(TaskUpdate dto){
         return Task.builder()
-                .id(taskId)
                 .title(dto.title())
                 .description(dto.description())
                 .priority(dto.priority() != null ? Priority.valueOf(dto.priority()) : Priority.MEDIUM)
@@ -24,9 +23,6 @@ public class TaskUpdateMapper {
                 .lastModifiedAt(LocalDateTime.now())
                 .startedAt(dto.startedAt())
                 .completedAt(dto.completedAt())
-                .parentTask(parentTask)
-                .belongsTo(belongsTo)
-                .assignee(assignee)
                 .build();
     }
 }

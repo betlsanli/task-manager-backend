@@ -9,15 +9,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class TaskCreateMapper {
-    public Task toEntity(TaskCreate dto, Task parentTask, Tasklist belongTo) {
+    public Task toEntity(TaskCreate dto) {
         return Task.builder()
                 .title(dto.title())
                 .description(dto.description())
                 .priority(dto.priority() != null ? Priority.valueOf(dto.priority()) : Priority.MEDIUM)
                 .status(dto.status() != null ? Status.valueOf(dto.status()) : Status.TO_DO)
                 .dueDate(dto.dueDate())
-                .parentTask(parentTask)
-                .belongsTo(belongTo)
                 .build();
     }
 }

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public record TaskCreate(
@@ -16,5 +17,6 @@ public record TaskCreate(
         LocalDateTime dueDate,
         UUID parentId,
         @NotNull(message = "Listid cannot be null or empty")
-        UUID listId
+        UUID listId,
+        List<UUID> assignees
 ) {}
