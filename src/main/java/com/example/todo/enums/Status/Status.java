@@ -5,9 +5,9 @@ public enum Status {
     IN_PROGRESS(2),
     DONE(3);
 
-    private int value;
+    private final int value;
 
-    private Status(int value) {
+    Status(int value) {
         this.value = value;
     }
 

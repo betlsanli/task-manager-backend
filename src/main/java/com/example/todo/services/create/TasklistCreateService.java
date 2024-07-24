@@ -39,7 +39,8 @@ public class TasklistCreateService {
         if (userList.isEmpty()) {
             throw new IllegalArgumentException("There must be at least one user of the list.");
         }
-        Tasklist tl = tasklistCreateMapper.toEntity(tasklist, userList);
+        Tasklist tl = tasklistCreateMapper.toEntity(tasklist);
+        tl.setUsers(userList);
         return tasklistRepository.save(tl);
     }
 

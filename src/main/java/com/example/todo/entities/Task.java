@@ -2,9 +2,7 @@ package com.example.todo.entities;
 
 import com.example.todo.enums.Priority.Priority;
 import com.example.todo.enums.Status.Status;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

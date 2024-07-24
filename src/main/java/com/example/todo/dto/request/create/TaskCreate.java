@@ -2,7 +2,6 @@ package com.example.todo.dto.request.create;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -23,6 +23,7 @@ public class TaskUpdateMapper {
                 .lastModifiedAt(LocalDateTime.now())
                 .startedAt(dto.startedAt())
                 .completedAt(dto.completedAt())
+                .assignees(dto.assignees())
                 .build();
     }
 }

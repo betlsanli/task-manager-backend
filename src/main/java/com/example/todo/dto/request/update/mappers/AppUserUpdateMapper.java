@@ -2,12 +2,9 @@ package com.example.todo.dto.request.update.mappers;
 
 import com.example.todo.dto.request.update.AppUserUpdate;
 import com.example.todo.entities.AppUser;
-import com.example.todo.entities.Tasklist;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
+
 
 @Service
 public class AppUserUpdateMapper {

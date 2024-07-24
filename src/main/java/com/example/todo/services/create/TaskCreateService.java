@@ -15,6 +15,7 @@ import com.example.todo.services.TasklistService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,7 +45,11 @@ public class TaskCreateService {
         if(taskCreate.parentId() != null)
             parentTask = taskRepository.findById(taskCreate.parentId()).orElse(null);
 
-        List<AppUser> assignees = appUserService.getAllByIds(taskCreate.assignees());
+        List<AppUser> assignees;
+        if(!taskCreate.assignees().isEmpty())
+            assignees = appUserService.getAllByIds(taskCreate.assignees());
+        else
+            assignees = new ArrayList<>();
 
         Tasklist tl = tasklistService.getById(taskCreate.listId());
 
@@ -67,22 +72,28 @@ public class TaskCreateService {
             newParent = taskRepository.findById(taskUpdate.parentId()).orElse(null);
 
         List<AppUser> oldAssignees = oldTask.getAssignees();
-        List<AppUser> newAssignees = appUserService.getAllByIds(taskUpdate.assignees());
+        List<AppUser> newAssignees = taskUpdate.assignees();
 
         handleAssigneeUpdate(oldAssignees,newAssignees,oldTask);
         handleParentUpdate(oldParent,newParent,oldTask);
 
         Task newTask = taskUpdateMapper.toEntity(taskUpdate);
         newTask.setId(taskId);
-        newTask.setAssignees(newAssignees);
         newTask.setParentTask(newParent);
+        newTask.setBelongsTo(oldTask.getBelongsTo());
 
         taskRepository.save(newTask);
         return taskResponseDTOMapper.toDTO(newTask);
     }
 
     public void handleParentUpdate(Task oldParent, Task newParent, Task oldTask) {
-        if(oldParent.getId() != newParent.getId()) {
+        if(oldParent == null)
+            return;
+        else if(newParent == null){
+            oldParent.removeSubTask(oldTask);
+            return;
+        }
+        else if(oldParent.getId() != newParent.getId()) {
             oldParent.removeSubTask(oldTask);
         }
     }

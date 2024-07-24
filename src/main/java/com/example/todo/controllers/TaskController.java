@@ -3,7 +3,6 @@ package com.example.todo.controllers;
 import com.example.todo.dto.request.create.TaskCreate;
 import com.example.todo.dto.request.update.TaskUpdate;
 import com.example.todo.dto.response.TaskResponseDTO;
-import com.example.todo.entities.Task;
 import com.example.todo.services.TaskService;
 import com.example.todo.services.create.TaskCreateService;
 import jakarta.validation.Valid;

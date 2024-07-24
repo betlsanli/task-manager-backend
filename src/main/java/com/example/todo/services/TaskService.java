@@ -37,11 +37,6 @@ public class TaskService {
         return taskRepository.findById(id).stream().map(taskResponseDTOMapper::toDTO).findFirst().orElseThrow();
     }
 
-//    public List<Task> getAllByUser(AppUser user) {
-//        List<Tasklist> tasklists = tasklistService.getAllByUser(user);
-//        return taskRepository.findAllByBelongsToIn(tasklists);
-//    }
-
     public List<TaskResponseDTO> getAllByTasklist(UUID listId) {
         Tasklist tasklist = tasklistService.getById(listId);
         return taskRepository.findAllByBelongsToAndParentTaskIsNull(tasklist).stream().map(taskResponseDTOMapper::toDTO).toList();
