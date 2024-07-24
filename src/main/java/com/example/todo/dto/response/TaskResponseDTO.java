@@ -20,5 +20,5 @@ public record TaskResponseDTO (
         UUID parentId,
         UUID listId,
         List<TaskResponseDTO> subTasks,
-        AppUser assignee
+        List<AppUser> assignees
 ){}

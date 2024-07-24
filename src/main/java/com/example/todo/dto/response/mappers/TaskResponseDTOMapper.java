@@ -23,7 +23,7 @@ public class TaskResponseDTOMapper {
                 (task.getParentTask() != null ? task.getParentTask().getId() : null),
                 task.getBelongsTo().getId(),
                 task.getSubTasks().stream().map(this::toDTO).collect(Collectors.toList()),
-                task.getAssignee()
+                task.getAssignees()
         );
     }
 }
