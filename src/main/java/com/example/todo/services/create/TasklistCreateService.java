@@ -35,30 +35,42 @@ public class TasklistCreateService {
 
     @Transactional
     public Tasklist createTasklist(TasklistCreate tasklist) {
-        List<AppUser> userList = appUserService.getAllByIds(tasklist.userIds());
+        List<AppUser> userList = appUserService.getAllByIds(tasklist.userIds()); //user who created the list will be in this
         if (userList.isEmpty()) {
             throw new IllegalArgumentException("There must be at least one user of the list.");
         }
         Tasklist tl = tasklistCreateMapper.toEntity(tasklist, userList);
-        for (AppUser user : userList) {
-            user.addTasklist(tl);
-        }
         return tasklistRepository.save(tl);
     }
 
     @Transactional
     public Tasklist updateTasklist(UUID listId, TasklistUpdate tasklist) {
 
-        tasklistRepository.findById(listId).orElseThrow();
-        List<Task> tasks = taskService.getAllByIds(tasklist.taskIds());
-        List<AppUser> userList = appUserService.getAllByIds(tasklist.userIds());
-        if (userList.isEmpty()) {
+        Tasklist oldTasklist = tasklistRepository.findById(listId).orElseThrow();
+        List<AppUser> oldUsers = oldTasklist.getUsers();
+
+        List<Task> newTasks = taskService.getAllByIds(tasklist.taskIds()); //orphan removal is true, no need to manually remove old tasks
+        List<AppUser> newUsers = appUserService.getAllByIds(tasklist.userIds());
+
+        if (newUsers.isEmpty()) {
+            //tasklistRepository.delete(oldTasklist); //if no list has no users, delete the list along with associated tasks
             throw new IllegalArgumentException("There must be at least one user of the list.");
         }
-        Tasklist newTasklist = tasklistUpdateMapper.toEntity(tasklist,listId,tasks,userList);
-        for (AppUser user : userList) {
-            user.addTasklist(newTasklist);
-        }
+        handleUserUpdate(oldUsers,newUsers,oldTasklist);
+
+        Tasklist newTasklist = tasklistUpdateMapper.toEntity(tasklist);
+        newTasklist.setId(listId);
+        newTasklist.setTasks(newTasks);
+        newTasklist.setUsers(newUsers);
+
         return tasklistRepository.save(newTasklist);
+    }
+
+    public void handleUserUpdate(List<AppUser> oldUsers, List<AppUser> newUsers, Tasklist oldTasklist) {
+        for(AppUser old : oldUsers) {
+            if (!newUsers.contains(old)) {
+                old.removeTasklist(oldTasklist);
+            }
+        }
     }
 }

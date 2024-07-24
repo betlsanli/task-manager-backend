@@ -11,14 +11,12 @@ import java.util.UUID;
 
 @Service
 public class AppUserUpdateMapper {
-    public AppUser toEntity(AppUserUpdate dto, UUID userId, List<Tasklist> tasklists){
+    public AppUser toEntity(AppUserUpdate dto){
         return AppUser.builder()
-                .id(userId)
                 .email(dto.email())
                 .firstName(dto.firstName())
                 .lastName(dto.lastName())
                 .password(dto.password())
-                .tasklists(tasklists)
                 .lastModifiedAt(LocalDateTime.now())
                 .build();
     }

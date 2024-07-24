@@ -14,7 +14,5 @@ public record AppUserUpdate(
         @NotEmpty(message = "First name cannot be null or empty")
         String firstName,
         @NotEmpty(message = "Last name cannot be null or empty")
-        String lastName,
-        @NotNull
-        List<UUID> listIds
+        String lastName
 ) {}

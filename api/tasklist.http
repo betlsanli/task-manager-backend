@@ -31,9 +31,9 @@ POST http://localhost:8080/tasklist/create-tasklist
 Content-Type: application/json
 
 {
-  "title": "liste 3",
-  "description": "aciklama 3",
-  "userIds": ["f50e3dad-afe5-409a-8325-4ce6b88f214d"]
+  "title": "liste 4",
+  "description": "aciklama 4",
+  "userIds": ["d04a8042-8335-4553-934d-2173a7f770ac"]
 }
 
 ### PUT tasklist 1

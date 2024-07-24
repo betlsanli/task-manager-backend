@@ -39,13 +39,13 @@ public class AppUserCreateService {
     }
 
     @Transactional
-    public AppUser updateUser(UUID userId, AppUserUpdate updateUserRequest) {
-        appUserRepository.findById(userId).orElseThrow();
-        List<Tasklist> tasklists = tasklistService.getAllByIds(updateUserRequest.listIds());
-        AppUser toSave = appUserUpdateMapper.toEntity(updateUserRequest,userId,tasklists);
-        for(Tasklist tasklist : tasklists) {
-            tasklist.addUser(toSave);
-        }
+    public AppUser updateUser(UUID userId, AppUserUpdate updateUserRequest) { //update and create dtos are now same
+        AppUser oldUser = appUserRepository.findById(userId).orElseThrow();
+
+        AppUser toSave = appUserUpdateMapper.toEntity(updateUserRequest);
+        toSave.setId(userId);
+
         return appUserRepository.save(toSave);
     }
+
 }

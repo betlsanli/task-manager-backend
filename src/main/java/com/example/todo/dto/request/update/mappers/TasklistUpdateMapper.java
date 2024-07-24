@@ -13,14 +13,11 @@ import java.util.UUID;
 @Service
 public class TasklistUpdateMapper {
 
-    public Tasklist toEntity(TasklistUpdate dto, UUID listId, List<Task> tasks, List<AppUser> appUsers){
+    public Tasklist toEntity(TasklistUpdate dto){
         return Tasklist.builder()
-                .id(listId)
                 .title(dto.title())
                 .description(dto.description())
                 .lastModifiedAt(LocalDateTime.now())
-                .tasks(tasks)
-                .users(appUsers)
                 .build();
     }
 }

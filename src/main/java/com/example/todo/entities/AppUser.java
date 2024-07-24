@@ -2,10 +2,7 @@ package com.example.todo.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
@@ -32,42 +29,41 @@ public class AppUser extends  BaseEntity{
     @Column(nullable = false, length = 128)
     private String lastName;
 
-    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE,CascadeType.REFRESH})
     @JsonIgnore
-    private List<Tasklist> tasklists;
+    @Builder.Default
+    private List<Tasklist> tasklists = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "assignee",fetch = FetchType.LAZY)
-    private List<Task> assignedTasks;
+    @OneToMany(mappedBy = "assignee",fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE,CascadeType.REFRESH})
+    @Builder.Default
+    private List<Task> assignedTasks = new ArrayList<>();
+
+
+    @PreUpdate
+    public void onUpdate(){
+        for (Tasklist tasklist : tasklists) {
+            tasklist.addUser(this);
+        }
+    }
 
     public void addTasklist(Tasklist tasklist){
-        if(this.tasklists == null){
-            this.tasklists = new ArrayList<>();
-        }
         if(!this.tasklists.contains(tasklist)){
             this.tasklists.add(tasklist);
         }
     }
+
     public void removeTasklist(Tasklist tasklist){
-        if(this.tasklists == null){
-            this.tasklists = new ArrayList<>();
-        }
         if(this.tasklists.contains(tasklist)){
             this.tasklists.remove(tasklist);
         }
     }
     public void addAssignedTask(Task task){
-        if(this.assignedTasks == null){
-            this.assignedTasks = new ArrayList<>();
-        }
         if(!this.assignedTasks.contains(task)){
             this.assignedTasks.add(task);
         }
     }
     public void removeAssignedTask(Task task){
-        if(this.assignedTasks == null){
-            this.assignedTasks = new ArrayList<>();
-        }
         if(this.assignedTasks.contains(task)){
             this.assignedTasks.remove(task);
         }
