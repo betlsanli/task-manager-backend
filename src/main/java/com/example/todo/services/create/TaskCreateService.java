@@ -74,13 +74,13 @@ public class TaskCreateService {
         List<AppUser> oldAssignees = oldTask.getAssignees();
         List<AppUser> newAssignees = taskUpdate.assignees();
 
-        handleAssigneeUpdate(oldAssignees,newAssignees,oldTask);
-        handleParentUpdate(oldParent,newParent,oldTask);
-
         Task newTask = taskUpdateMapper.toEntity(taskUpdate);
         newTask.setId(taskId);
         newTask.setParentTask(newParent);
         newTask.setBelongsTo(oldTask.getBelongsTo());
+
+        handleAssigneeUpdate(oldAssignees,newAssignees,oldTask);
+        handleParentUpdate(oldParent,newParent,oldTask);
 
         taskRepository.save(newTask);
         return taskResponseDTOMapper.toDTO(newTask);

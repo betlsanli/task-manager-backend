@@ -57,12 +57,13 @@ public class TasklistCreateService {
             //tasklistRepository.delete(oldTasklist); //if no list has no users, delete the list along with associated tasks
             throw new IllegalArgumentException("There must be at least one user of the list.");
         }
-        handleUserUpdate(oldUsers,newUsers,oldTasklist);
 
         Tasklist newTasklist = tasklistUpdateMapper.toEntity(tasklist);
         newTasklist.setId(listId);
         newTasklist.setTasks(newTasks);
         newTasklist.setUsers(newUsers);
+
+        handleUserUpdate(oldUsers,newUsers,oldTasklist);
 
         return tasklistRepository.save(newTasklist);
     }
