@@ -3,7 +3,9 @@ package com.example.todo.controllers;
 import com.example.todo.dto.request.create.AppUserCreate;
 import com.example.todo.dto.request.update.AppUserUpdate;
 import com.example.todo.entities.AppUser;
+import com.example.todo.entities.Tasklist;
 import com.example.todo.services.AppUserService;
+import com.example.todo.services.TasklistService;
 import com.example.todo.services.create.AppUserCreateService;
 import jakarta.validation.Valid;
 import org.slf4j.LoggerFactory;
@@ -56,6 +58,25 @@ public class AppUserController {
     public ResponseEntity<List<AppUser>> getAllUsers() {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(appUserService.getAll());
+        }
+        catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/of-list/{listId}")
+    public ResponseEntity<List<AppUser>> getAllUsersOfList(@PathVariable UUID listId){
+        try {
+            if (listId == null)
+                throw new IllegalArgumentException("List id cannot be null");
+            return ResponseEntity.status(HttpStatus.OK).body(appUserService.getAllByList(listId));
+        }catch (IllegalArgumentException iae) {
+            log.error(iae.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }catch (NoSuchElementException nsee) {
+            log.error(nsee.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
