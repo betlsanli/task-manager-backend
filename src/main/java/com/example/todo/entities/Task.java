@@ -42,7 +42,7 @@ public class Task extends BaseEntity {
     private LocalDateTime startedAt;
 
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany
     @JoinTable(
             name = "task_user",
             joinColumns = @JoinColumn(name = "task_id"),

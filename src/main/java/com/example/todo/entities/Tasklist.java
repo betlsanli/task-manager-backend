@@ -28,7 +28,7 @@ public class Tasklist extends BaseEntity{
     private List<Task> tasks = new ArrayList<>();
 
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_tasklist",
             joinColumns = @JoinColumn(name = "tasklist_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
