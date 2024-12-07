@@ -64,12 +64,12 @@ public class TaskController {
 
     // duplicate of "/tasklist/{listId}/tasks"
 
-    @GetMapping("/of-list/{listId}")
-    public ResponseEntity<List<TaskResponseDTO>> getAllTaskByTasklist(@PathVariable UUID listId) {
+    @GetMapping("/of-project/{projectId}")
+    public ResponseEntity<List<TaskResponseDTO>> getAllTaskByProject(@PathVariable UUID projectId) {
         try {
-            if(listId == null)
-                throw new IllegalArgumentException("List id cannot be null");
-            return ResponseEntity.status(HttpStatus.OK).body(taskService.getAllByTasklist(listId));
+            if(projectId == null)
+                throw new IllegalArgumentException("Project id cannot be null");
+            return ResponseEntity.status(HttpStatus.OK).body(taskService.getAllByTasklist(projectId));
         }catch (IllegalArgumentException iae){
             log.error(iae.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

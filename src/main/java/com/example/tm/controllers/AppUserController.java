@@ -63,12 +63,12 @@ public class AppUserController {
         }
     }
 
-    @GetMapping("/of-list/{listId}")
-    public ResponseEntity<List<AppUser>> getAllUsersOfList(@PathVariable UUID listId){
+    @GetMapping("/of-project/{projectId}")
+    public ResponseEntity<List<AppUser>> getAllUsersOfProject(@PathVariable UUID projectId){
         try {
-            if (listId == null)
+            if (projectId == null)
                 throw new IllegalArgumentException("List id cannot be null");
-            return ResponseEntity.status(HttpStatus.OK).body(appUserService.getAllByList(listId));
+            return ResponseEntity.status(HttpStatus.OK).body(appUserService.getAllByProject(projectId));
         }catch (IllegalArgumentException iae) {
             log.error(iae.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);

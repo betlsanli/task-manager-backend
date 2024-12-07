@@ -33,9 +33,9 @@ public class AppUserService {
         return appUserRepository.findAllById(ids);
     }
 
-    public List<AppUser> getAllByList(UUID listId) {
+    public List<AppUser> getAllByProject(UUID listId) {
         Project project = projectService.getById(listId);
-        return appUserRepository.findAllByProjectContains(project);
+        return appUserRepository.findAllByProjectsContains(project);
     }
 
     public boolean deleteById(UUID id) {

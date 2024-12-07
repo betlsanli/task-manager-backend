@@ -23,22 +23,22 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/tasklist")
 @Validated
-public class TasklistController {
+public class ProjectController {
 
     private final ProjectService projectService;
     private final AppUserService appUserService;
-    private static final Logger log = LoggerFactory.getLogger(TasklistController.class);
+    private static final Logger log = LoggerFactory.getLogger(ProjectController.class);
     private final ProjectCreateService projectCreateService;
 
     @Autowired
-    public TasklistController(ProjectService projectService, AppUserService appUserService, ProjectCreateService projectCreateService) {
+    public ProjectController(ProjectService projectService, AppUserService appUserService, ProjectCreateService projectCreateService) {
         this.projectService = projectService;
         this.appUserService = appUserService;
         this.projectCreateService = projectCreateService;
     }
 
-    @GetMapping("/all-list")
-    public ResponseEntity<List<Project>> getAllTasklists() {
+    @GetMapping("/all-project")
+    public ResponseEntity<List<Project>> getAllProjects() {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(projectService.getAll());
         }catch (Exception e) {
@@ -48,7 +48,7 @@ public class TasklistController {
     }
 
     @GetMapping("/of-user/{userId}")
-    public ResponseEntity<List<Project>> getAllTasklistByUserId(@PathVariable UUID userId) {
+    public ResponseEntity<List<Project>> getAllProjectsByUserId(@PathVariable UUID userId) {
         try {
             if(userId == null)
                 throw new IllegalArgumentException("User id cannot be null");
@@ -66,12 +66,12 @@ public class TasklistController {
         }
     }
 
-    @GetMapping("/{listId}")
-    public ResponseEntity<Project> getTasklistByListId(@PathVariable UUID listId) {
+    @GetMapping("/{projectId}")
+    public ResponseEntity<Project> getProjectById(@PathVariable UUID projectId) {
         try {
-            if(listId == null)
-                throw new IllegalArgumentException("List id cannot be null");
-            return ResponseEntity.status(HttpStatus.OK).body(projectService.getById(listId));
+            if(projectId == null)
+                throw new IllegalArgumentException("Project id cannot be null");
+            return ResponseEntity.status(HttpStatus.OK).body(projectService.getById(projectId));
         }catch (IllegalArgumentException iae){
             log.error(iae.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -84,12 +84,12 @@ public class TasklistController {
         }
     }
 
-    @PostMapping("/create-tasklist")
-    public ResponseEntity<Project> createTasklist(@RequestBody @Valid ProjectCreate tasklist) {
+    @PostMapping("/create-project")
+    public ResponseEntity<Project> createProject(@RequestBody @Valid ProjectCreate project) {
         try {
-            if(tasklist == null)
+            if(project == null)
                 throw new IllegalArgumentException("Project cannot be null");
-            return ResponseEntity.status(HttpStatus.CREATED).body(projectCreateService.createProject(tasklist));
+            return ResponseEntity.status(HttpStatus.CREATED).body(projectCreateService.createProject(project));
         }catch (IllegalArgumentException iae){
             log.error(iae.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -102,12 +102,12 @@ public class TasklistController {
         }
     }
 
-    @DeleteMapping("/delete/{listId}")
-    public ResponseEntity<Boolean> deleteTasklist(@PathVariable UUID listId) {
+    @DeleteMapping("/delete/{projectId}")
+    public ResponseEntity<Boolean> deleteProject(@PathVariable UUID projectId) {
         try {
-            if (listId == null)
-                throw new IllegalArgumentException("List id cannot be null");
-            boolean isDeleted = projectService.deleteById(listId);
+            if (projectId == null)
+                throw new IllegalArgumentException("Project id cannot be null");
+            boolean isDeleted = projectService.deleteById(projectId);
             return ResponseEntity.status(HttpStatus.OK).body(isDeleted);
         }catch (IllegalArgumentException iae){
             log.error(iae.getMessage());
@@ -121,12 +121,12 @@ public class TasklistController {
         }
     }
 
-    @PutMapping("/edit/{listId}")
-    public ResponseEntity<Project> updateTasklist(@PathVariable UUID listId, @RequestBody @Valid ProjectUpdate tasklist) {
+    @PutMapping("/edit/{projectId}")
+    public ResponseEntity<Project> updateProject(@PathVariable UUID projectId, @RequestBody @Valid ProjectUpdate project) {
         try {
-            if (listId == null || tasklist == null)
+            if (projectId == null || project == null)
                 throw new IllegalArgumentException("Project cannot be null");
-            return ResponseEntity.status(HttpStatus.CREATED).body(projectCreateService.updateProject(listId, tasklist));
+            return ResponseEntity.status(HttpStatus.CREATED).body(projectCreateService.updateProject(projectId, project));
         }catch (IllegalArgumentException iae){
             log.error(iae.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
