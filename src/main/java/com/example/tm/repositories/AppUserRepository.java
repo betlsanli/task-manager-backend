@@ -1,7 +1,7 @@
 package com.example.tm.repositories;
 
 import com.example.tm.entities.AppUser;
-import com.example.tm.entities.Tasklist;
+import com.example.tm.entities.Project;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -15,5 +15,5 @@ public interface AppUserRepository extends JpaRepository<AppUser, UUID> {
     List<AppUser> findAllByFirstNameContainingIgnoreCase(String firstName);
     List<AppUser> findAllByLastNameContainingIgnoreCase(String lastName);
     List<AppUser> findAllByFirstNameAndLastName(String firstName, String lastName);
-    List<AppUser> findAllByTasklistsContains(Tasklist tasklist);
+    List<AppUser> findAllByProjectContains(Project project);
 }

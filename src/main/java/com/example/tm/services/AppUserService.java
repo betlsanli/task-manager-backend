@@ -1,7 +1,7 @@
 package com.example.tm.services;
 
 import com.example.tm.entities.AppUser;
-import com.example.tm.entities.Tasklist;
+import com.example.tm.entities.Project;
 import com.example.tm.repositories.AppUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,13 +12,13 @@ import java.util.UUID;
 public class AppUserService {
 
     private final AppUserRepository appUserRepository;
-    private final TasklistService tasklistService;
+    private final ProjectService projectService;
     //private static final Logger log = LoggerFactory.getLogger(AppUserService.class);
 
     @Autowired
-    public AppUserService(AppUserRepository appUserRepository, TasklistService tasklistService) {
+    public AppUserService(AppUserRepository appUserRepository, ProjectService projectService) {
         this.appUserRepository = appUserRepository;
-        this.tasklistService = tasklistService;
+        this.projectService = projectService;
     }
 
     public List<AppUser> getAll() {
@@ -34,8 +34,8 @@ public class AppUserService {
     }
 
     public List<AppUser> getAllByList(UUID listId) {
-        Tasklist tasklist = tasklistService.getById(listId);
-        return appUserRepository.findAllByTasklistsContains(tasklist);
+        Project project = projectService.getById(listId);
+        return appUserRepository.findAllByProjectContains(project);
     }
 
     public boolean deleteById(UUID id) {

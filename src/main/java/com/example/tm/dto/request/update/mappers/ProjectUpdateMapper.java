@@ -1,15 +1,15 @@
 package com.example.tm.dto.request.update.mappers;
 
-import com.example.tm.dto.request.update.TasklistUpdate;
-import com.example.tm.entities.Tasklist;
+import com.example.tm.dto.request.update.ProjectUpdate;
+import com.example.tm.entities.Project;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
 @Service
-public class TasklistUpdateMapper {
+public class ProjectUpdateMapper {
 
-    public Tasklist toEntity(TasklistUpdate dto){
-        return Tasklist.builder()
+    public Project toEntity(ProjectUpdate dto){
+        return Project.builder()
                 .title(dto.title())
                 .description(dto.description())
                 .lastModifiedAt(LocalDateTime.now())

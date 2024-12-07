@@ -32,7 +32,7 @@ public class AppUser extends  BaseEntity{
     @ManyToMany(mappedBy = "users")
     @JsonIgnore
     @Builder.Default
-    private List<Tasklist> tasklists = new ArrayList<>();
+    private List<Project> projects = new ArrayList<>();
 
     @JsonIgnore
     @ManyToMany(mappedBy = "assignees", fetch = FetchType.LAZY)
@@ -41,20 +41,20 @@ public class AppUser extends  BaseEntity{
 
     @PreUpdate
     public void onUpdate(){
-        for (Tasklist tasklist : tasklists) {
-            tasklist.addUser(this);
+        for (Project project : projects) {
+            project.addUser(this);
         }
     }
 
-    public void addTasklist(Tasklist tasklist){
-        if(!this.tasklists.contains(tasklist)){
-            this.tasklists.add(tasklist);
+    public void addProject(Project project){
+        if(!this.projects.contains(project)){
+            this.projects.add(project);
         }
     }
 
-    public void removeTasklist(Tasklist tasklist){
-        if(this.tasklists.contains(tasklist)){
-            this.tasklists.remove(tasklist);
+    public void removeProject(Project project){
+        if(this.projects.contains(project)){
+            this.projects.remove(project);
         }
     }
     public void addAssignedTask(Task task){

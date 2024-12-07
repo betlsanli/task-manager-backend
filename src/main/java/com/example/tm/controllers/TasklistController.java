@@ -1,12 +1,12 @@
 package com.example.tm.controllers;
 
-import com.example.tm.dto.request.create.TasklistCreate;
-import com.example.tm.dto.request.update.TasklistUpdate;
+import com.example.tm.dto.request.create.ProjectCreate;
+import com.example.tm.dto.request.update.ProjectUpdate;
 import com.example.tm.entities.AppUser;
-import com.example.tm.entities.Tasklist;
+import com.example.tm.entities.Project;
 import com.example.tm.services.AppUserService;
-import com.example.tm.services.TasklistService;
-import com.example.tm.services.create.TasklistCreateService;
+import com.example.tm.services.ProjectService;
+import com.example.tm.services.create.ProjectCreateService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,22 +25,22 @@ import java.util.UUID;
 @Validated
 public class TasklistController {
 
-    private final TasklistService tasklistService;
+    private final ProjectService projectService;
     private final AppUserService appUserService;
     private static final Logger log = LoggerFactory.getLogger(TasklistController.class);
-    private final TasklistCreateService tasklistCreateService;
+    private final ProjectCreateService projectCreateService;
 
     @Autowired
-    public TasklistController(TasklistService tasklistService, AppUserService appUserService, TasklistCreateService tasklistCreateService) {
-        this.tasklistService = tasklistService;
+    public TasklistController(ProjectService projectService, AppUserService appUserService, ProjectCreateService projectCreateService) {
+        this.projectService = projectService;
         this.appUserService = appUserService;
-        this.tasklistCreateService = tasklistCreateService;
+        this.projectCreateService = projectCreateService;
     }
 
     @GetMapping("/all-list")
-    public ResponseEntity<List<Tasklist>> getAllTasklists() {
+    public ResponseEntity<List<Project>> getAllTasklists() {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(tasklistService.getAll());
+            return ResponseEntity.status(HttpStatus.OK).body(projectService.getAll());
         }catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -48,12 +48,12 @@ public class TasklistController {
     }
 
     @GetMapping("/of-user/{userId}")
-    public ResponseEntity<List<Tasklist>> getAllTasklistByUserId(@PathVariable UUID userId) {
+    public ResponseEntity<List<Project>> getAllTasklistByUserId(@PathVariable UUID userId) {
         try {
             if(userId == null)
                 throw new IllegalArgumentException("User id cannot be null");
             AppUser user = appUserService.getById(userId);
-            return ResponseEntity.status(HttpStatus.OK).body(tasklistService.getAllByUser(user));
+            return ResponseEntity.status(HttpStatus.OK).body(projectService.getAllByUser(user));
         }catch (IllegalArgumentException iae){
             log.error(iae.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -67,11 +67,11 @@ public class TasklistController {
     }
 
     @GetMapping("/{listId}")
-    public ResponseEntity<Tasklist> getTasklistByListId(@PathVariable UUID listId) {
+    public ResponseEntity<Project> getTasklistByListId(@PathVariable UUID listId) {
         try {
             if(listId == null)
                 throw new IllegalArgumentException("List id cannot be null");
-            return ResponseEntity.status(HttpStatus.OK).body(tasklistService.getById(listId));
+            return ResponseEntity.status(HttpStatus.OK).body(projectService.getById(listId));
         }catch (IllegalArgumentException iae){
             log.error(iae.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -85,11 +85,11 @@ public class TasklistController {
     }
 
     @PostMapping("/create-tasklist")
-    public ResponseEntity<Tasklist> createTasklist(@RequestBody @Valid TasklistCreate tasklist) {
+    public ResponseEntity<Project> createTasklist(@RequestBody @Valid ProjectCreate tasklist) {
         try {
             if(tasklist == null)
-                throw new IllegalArgumentException("Tasklist cannot be null");
-            return ResponseEntity.status(HttpStatus.CREATED).body(tasklistCreateService.createTasklist(tasklist));
+                throw new IllegalArgumentException("Project cannot be null");
+            return ResponseEntity.status(HttpStatus.CREATED).body(projectCreateService.createProject(tasklist));
         }catch (IllegalArgumentException iae){
             log.error(iae.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -107,7 +107,7 @@ public class TasklistController {
         try {
             if (listId == null)
                 throw new IllegalArgumentException("List id cannot be null");
-            boolean isDeleted = tasklistService.deleteById(listId);
+            boolean isDeleted = projectService.deleteById(listId);
             return ResponseEntity.status(HttpStatus.OK).body(isDeleted);
         }catch (IllegalArgumentException iae){
             log.error(iae.getMessage());
@@ -122,11 +122,11 @@ public class TasklistController {
     }
 
     @PutMapping("/edit/{listId}")
-    public ResponseEntity<Tasklist> updateTasklist(@PathVariable UUID listId, @RequestBody @Valid TasklistUpdate tasklist) {
+    public ResponseEntity<Project> updateTasklist(@PathVariable UUID listId, @RequestBody @Valid ProjectUpdate tasklist) {
         try {
             if (listId == null || tasklist == null)
-                throw new IllegalArgumentException("Tasklist cannot be null");
-            return ResponseEntity.status(HttpStatus.CREATED).body(tasklistCreateService.updateTasklist(listId, tasklist));
+                throw new IllegalArgumentException("Project cannot be null");
+            return ResponseEntity.status(HttpStatus.CREATED).body(projectCreateService.updateProject(listId, tasklist));
         }catch (IllegalArgumentException iae){
             log.error(iae.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

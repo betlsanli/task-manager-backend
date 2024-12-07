@@ -2,7 +2,7 @@ package com.example.tm.dto.request.create.mappers;
 
 import com.example.tm.dto.request.create.AppUserCreate;
 import com.example.tm.entities.AppUser;
-import com.example.tm.entities.Tasklist;
+import com.example.tm.entities.Project;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -14,7 +14,7 @@ public class AppUserCreateMapper {
                 .email(dto.email())
                 .firstName(dto.firstName())
                 .lastName(dto.lastName())
-                .tasklists(Collections.<Tasklist>emptyList())
+                .projects(Collections.<Project>emptyList())
                 .password(dto.password())
                 .build();
     }

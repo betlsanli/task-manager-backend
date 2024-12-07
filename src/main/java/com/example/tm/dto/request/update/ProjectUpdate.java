@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
 
-public record TasklistUpdate (
+public record ProjectUpdate(
         @NotEmpty(message = "Title cannot be null or empty")
         String title,
         String description,

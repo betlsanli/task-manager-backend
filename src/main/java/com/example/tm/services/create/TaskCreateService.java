@@ -8,10 +8,10 @@ import com.example.tm.dto.response.TaskResponseDTO;
 import com.example.tm.dto.response.mappers.TaskResponseDTOMapper;
 import com.example.tm.entities.AppUser;
 import com.example.tm.entities.Task;
-import com.example.tm.entities.Tasklist;
+import com.example.tm.entities.Project;
 import com.example.tm.repositories.TaskRepository;
 import com.example.tm.services.AppUserService;
-import com.example.tm.services.TasklistService;
+import com.example.tm.services.ProjectService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -23,15 +23,15 @@ import java.util.UUID;
 public class TaskCreateService {
     private final TaskRepository taskRepository;
    // private static final Logger log = LoggerFactory.getLogger(TaskService.class);
-    private final TasklistService tasklistService;
+    private final ProjectService projectService;
     private final TaskCreateMapper taskCreateMapper;
     private final TaskUpdateMapper taskUpdateMapper;
     private final TaskResponseDTOMapper taskResponseDTOMapper;
     private final AppUserService appUserService;
 
-    public TaskCreateService(TaskRepository taskRepository, TasklistService tasklistService, TaskCreateMapper taskCreateMapper, TaskUpdateMapper taskUpdateMapper, TaskResponseDTOMapper taskResponseDTOMapper, AppUserService appUserService) {
+    public TaskCreateService(TaskRepository taskRepository, ProjectService projectService, TaskCreateMapper taskCreateMapper, TaskUpdateMapper taskUpdateMapper, TaskResponseDTOMapper taskResponseDTOMapper, AppUserService appUserService) {
         this.taskRepository = taskRepository;
-        this.tasklistService = tasklistService;
+        this.projectService = projectService;
         this.taskCreateMapper = taskCreateMapper;
         this.taskUpdateMapper = taskUpdateMapper;
         this.taskResponseDTOMapper = taskResponseDTOMapper;
@@ -51,7 +51,7 @@ public class TaskCreateService {
         else
             assignees = new ArrayList<>();
 
-        Tasklist tl = tasklistService.getById(taskCreate.listId());
+        Project tl = projectService.getById(taskCreate.listId());
 
         Task newTask = taskCreateMapper.toEntity(taskCreate);
         newTask.setAssignees(assignees);

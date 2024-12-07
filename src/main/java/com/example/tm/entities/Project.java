@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @SuperBuilder
 @Entity
-public class Tasklist extends BaseEntity{
+public class Project extends BaseEntity{
 
     @Column(nullable = false, length = 126)
     private String title;
@@ -29,8 +29,8 @@ public class Tasklist extends BaseEntity{
 
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_tasklist",
-            joinColumns = @JoinColumn(name = "tasklist_id"),
+    @JoinTable(name = "user_project",
+            joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     //@JsonIgnore
     @Builder.Default
@@ -40,13 +40,13 @@ public class Tasklist extends BaseEntity{
     @PrePersist
     public void onPersist(){
         for(AppUser user : users){
-            user.addTasklist(this);
+            user.addProject(this);
         }
     }
     @PreUpdate
     protected void onUpdate() {
         for(AppUser user : users){
-            user.addTasklist(this);
+            user.addProject(this);
         }
         for(Task task : tasks){
             task.setBelongsTo(this);

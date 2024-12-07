@@ -3,7 +3,7 @@ GET http://localhost:8080/task/all-task
 
 ### GET all task by user
 GET http://localhost:8080/task/of-user/a08b7f5f-4179-44c5-9d72-d40c5cc30d89
-### GET all task by tasklist
+### GET all task by project
 GET http://localhost:8080/task/of-list/dff29c18-a939-413d-a309-00e90cd3decf
 
 ### GET task detail

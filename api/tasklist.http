@@ -1,14 +1,14 @@
 ### GET all by user
-GET http://localhost:8080/tasklist/of-user/a08b7f5f-4179-44c5-9d72-d40c5cc30d89
+GET http://localhost:8080/project/of-user/a08b7f5f-4179-44c5-9d72-d40c5cc30d89
 
-### GET tasklist details
-GET http://localhost:8080/tasklist/dff29c18-a939-413d-a309-00e90cd3decf
+### GET project details
+GET http://localhost:8080/project/dff29c18-a939-413d-a309-00e90cd3decf
 
-### GET all tasklist
-GET http://localhost:8080/tasklist/all-list
+### GET all project
+GET http://localhost:8080/project/all-list
 
-### POST tasklist 1
-POST http://localhost:8080/tasklist/create-tasklist
+### POST project 1
+POST http://localhost:8080/project/create-project
 Content-Type: application/json
 
 {
@@ -16,8 +16,8 @@ Content-Type: application/json
   "userIds": ["2a31bfdd-fb08-4b14-8788-70bd88182578", "f50e3dad-afe5-409a-8325-4ce6b88f214d", "d04a8042-8335-4553-934d-2173a7f770ac"]
 }
 
-### POST tasklist 2
-POST http://localhost:8080/tasklist/create-tasklist
+### POST project 2
+POST http://localhost:8080/project/create-project
 Content-Type: application/json
 
 {
@@ -26,8 +26,8 @@ Content-Type: application/json
   "userIds": ["2a31bfdd-fb08-4b14-8788-70bd88182578"]
 }
 
-### POST tasklist 3
-POST http://localhost:8080/tasklist/create-tasklist
+### POST project 3
+POST http://localhost:8080/project/create-project
 Content-Type: application/json
 
 {
@@ -36,8 +36,8 @@ Content-Type: application/json
   "userIds": ["d04a8042-8335-4553-934d-2173a7f770ac"]
 }
 
-### PUT tasklist 1
-PUT http://localhost:8080/tasklist/edit/de37d624-5f33-400e-89a3-cde2beebe8b0
+### PUT project 1
+PUT http://localhost:8080/project/edit/de37d624-5f33-400e-89a3-cde2beebe8b0
 Content-Type: application/json
 
 {
@@ -48,8 +48,8 @@ Content-Type: application/json
 }
 
 
-### PUT tasklist 2
-PUT http://localhost:8080/tasklist/edit/ad4b7c8e-a48b-41e7-8c57-3fc1ee62a69b
+### PUT project 2
+PUT http://localhost:8080/project/edit/ad4b7c8e-a48b-41e7-8c57-3fc1ee62a69b
 Content-Type: application/json
 
 {
@@ -60,5 +60,5 @@ Content-Type: application/json
 }
 
 
-### DELETE tasklist 3
-DELETE http://localhost:8080/tasklist/delete/3b573394-ac3f-4791-8439-658c51d6803b
+### DELETE project 3
+DELETE http://localhost:8080/project/delete/3b573394-ac3f-4791-8439-658c51d6803b

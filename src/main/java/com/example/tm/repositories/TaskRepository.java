@@ -1,9 +1,9 @@
 package com.example.tm.repositories;
 
+import com.example.tm.entities.Project;
 import com.example.tm.enums.Priority.Priority;
 import com.example.tm.enums.Status.Status;
 import com.example.tm.entities.Task;
-import com.example.tm.entities.Tasklist;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
@@ -18,8 +18,8 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
 
     List<Task> findAllByParentTaskIsNull();
 
-    List<Task> findAllByBelongsToAndParentTaskIsNull(Tasklist tasklist);
-    List<Task> findAllByBelongsToInAndParentTaskIsNull(List<Tasklist> tasklists);
+    List<Task> findAllByBelongsToAndParentTaskIsNull(Project project);
+    List<Task> findAllByBelongsToInAndParentTaskIsNull(List<Project> projects);
     List<Task> findAllByParentTask(Task parenTask);
 
 
