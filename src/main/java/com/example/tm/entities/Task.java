@@ -2,12 +2,9 @@ package com.example.tm.entities;
 
 import com.example.tm.enums.Priority.Priority;
 import com.example.tm.enums.Status.Status;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -41,57 +38,21 @@ public class Task extends BaseEntity {
     @Column(insertable = false)
     private LocalDateTime startedAt;
 
-
-    @ManyToMany
-    @JoinTable(
-            name = "task_user",
-            joinColumns = @JoinColumn(name = "task_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
     @Builder.Default
-    private List<AppUser> assignees = new ArrayList<>();
+    private List<UserTaskProject> assignments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "parentTask", cascade = CascadeType.ALL)
-    @Builder.Default
-    private List<Task> subTasks = new ArrayList<>();
-
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "parent_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Task parentTask;
-
-    @ManyToOne
-    @JoinColumn(name = "project_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Project belongsTo;
-
-    @PrePersist
-    private void onCreate() {
-        belongsTo.addTask(this);
-        if(parentTask != null)
-            parentTask.addSubTask(this);
-        for(AppUser assignee : assignees){
-            assignee.addAssignedTask(this);
-        }
-    }
     @PreUpdate
-    private void onUpdate() {
-        if(parentTask != null)
-            parentTask.addSubTask(this);
-        for(AppUser assignee : assignees){
-            assignee.addAssignedTask(this);
-        }
+    public void onUpdate() {
+        this.setLastModifiedAt(LocalDateTime.now());
     }
 
-    public void addSubTask(Task subTask) {
-        if (!subTasks.contains(subTask)) {
-            this.subTasks.add(subTask);
-        }
+    public void addAssignment(UserTaskProject assignment) {
+        if(!assignments.contains(assignment))
+            assignments.add(assignment);
     }
-    public void removeSubTask(Task subTask) {
-        if (subTasks.contains(subTask)) {
-            this.subTasks.remove(subTask);
-        }
+    public void removeAssignment(UserTaskProject assignment) {
+        if(assignments.contains(assignment))
+            assignments.remove(assignment);
     }
 }

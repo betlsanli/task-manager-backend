@@ -1,7 +1,6 @@
 package com.example.tm.dto.response.mappers;
 
 import com.example.tm.dto.response.TaskResponseDTO;
-import com.example.tm.entities.Task;
 import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;

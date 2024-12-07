@@ -16,10 +16,11 @@ public class BaseEntity {
 
     @Id
     @GeneratedValue
+    @Column(updatable = false, insertable = false)
     private UUID id;
 
     @Builder.Default
-    @Column(updatable = false, nullable = false)
+    @Column(updatable = false, nullable = false, insertable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(insertable = false)

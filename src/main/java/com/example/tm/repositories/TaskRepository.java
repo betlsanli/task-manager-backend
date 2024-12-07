@@ -3,7 +3,6 @@ package com.example.tm.repositories;
 import com.example.tm.entities.Project;
 import com.example.tm.enums.Priority.Priority;
 import com.example.tm.enums.Status.Status;
-import com.example.tm.entities.Task;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;

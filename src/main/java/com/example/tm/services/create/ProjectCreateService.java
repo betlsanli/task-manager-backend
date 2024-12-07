@@ -6,7 +6,6 @@ import com.example.tm.dto.request.update.ProjectUpdate;
 import com.example.tm.dto.request.update.mappers.ProjectUpdateMapper;
 import com.example.tm.entities.AppUser;
 import com.example.tm.entities.Project;
-import com.example.tm.entities.Task;
 import com.example.tm.repositories.ProjectRepository;
 import com.example.tm.services.AppUserService;
 import com.example.tm.services.TaskService;

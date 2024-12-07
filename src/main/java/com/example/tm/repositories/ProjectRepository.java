@@ -2,7 +2,6 @@ package com.example.tm.repositories;
 
 import com.example.tm.entities.AppUser;
 import com.example.tm.entities.Project;
-import com.example.tm.entities.Task;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

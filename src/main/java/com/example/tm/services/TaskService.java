@@ -4,7 +4,6 @@ import com.example.tm.dto.response.TaskResponseDTO;
 import com.example.tm.dto.response.mappers.TaskResponseDTOMapper;
 import com.example.tm.entities.AppUser;
 import com.example.tm.entities.Project;
-import com.example.tm.entities.Task;
 import com.example.tm.repositories.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

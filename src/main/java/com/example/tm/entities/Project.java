@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,51 +25,38 @@ public class Project extends BaseEntity{
     @Column(length = 512)
     private String description;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "belongsTo", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<Task> tasks = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "manager_id", nullable = false)
+    private AppUser manager;
 
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_project",
-            joinColumns = @JoinColumn(name = "project_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
-    //@JsonIgnore
-    @Builder.Default
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "project_user",  // The name of the junction table
+            joinColumns = @JoinColumn(name = "project_id"),  // Foreign key for the Project
+            inverseJoinColumns = @JoinColumn(name = "user_id")  // Foreign key for the AppUser
+    )
     private List<AppUser> users = new ArrayList<>();
 
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<UserTaskProject> assignments = new ArrayList<>();
 
     @PrePersist
-    public void onPersist(){
-        for(AppUser user : users){
-            user.addProject(this);
-        }
+    private void onCreate() {
+        manager.addManagedProject(this);
     }
     @PreUpdate
-    protected void onUpdate() {
-        for(AppUser user : users){
-            user.addProject(this);
-        }
-        for(Task task : tasks){
-            task.setBelongsTo(this);
-        }
+    protected void onUpdate() { // do not forget to remove old in controller
+        manager.addManagedProject(this);
+        this.setLastModifiedAt(LocalDateTime.now());
     }
 
-    public void addUser(AppUser user) {
-        if (!users.contains(user)) {
-            users.add(user);
-        }
+    public void addAssignment(UserTaskProject assignment) {
+        if(!assignments.contains(assignment))
+            assignments.add(assignment);
     }
-    public void addTask(Task task) {
-        if (!tasks.contains(task)) {
-            tasks.add(task);
-        }
-    }
-    public void removeTask(Task task) {
-        tasks.remove(task);
-    }
-    public void removeUser(AppUser user) {
-        users.remove(user);
+    public void removeAssignment(UserTaskProject assignment) {
+        if(assignments.contains(assignment))
+            assignments.remove(assignment);
     }
 }

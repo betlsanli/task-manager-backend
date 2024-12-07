@@ -14,7 +14,6 @@ public class AppUserCreateMapper {
                 .email(dto.email())
                 .firstName(dto.firstName())
                 .lastName(dto.lastName())
-                .projects(Collections.<Project>emptyList())
                 .password(dto.password())
                 .build();
     }

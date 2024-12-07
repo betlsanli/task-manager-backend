@@ -3,7 +3,6 @@ package com.example.tm.dto.request.update.mappers;
 import com.example.tm.dto.request.update.TaskUpdate;
 import com.example.tm.enums.Priority.Priority;
 import com.example.tm.enums.Status.Status;
-import com.example.tm.entities.Task;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
