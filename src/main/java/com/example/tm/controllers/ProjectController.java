@@ -21,7 +21,7 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/tasklist")
+@RequestMapping("/project")
 @Validated
 public class ProjectController {
 
