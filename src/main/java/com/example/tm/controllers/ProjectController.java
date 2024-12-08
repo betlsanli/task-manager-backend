@@ -23,13 +23,11 @@ import java.util.UUID;
 public class ProjectController {
 
     private final ProjectService projectService;
-    private final AppUserService appUserService;
     private static final Logger log = LoggerFactory.getLogger(ProjectController.class);
 
     @Autowired
-    public ProjectController(ProjectService projectService, AppUserService appUserService) {
+    public ProjectController(ProjectService projectService) {
         this.projectService = projectService;
-        this.appUserService = appUserService;
     }
 
     @GetMapping("/all-project")
