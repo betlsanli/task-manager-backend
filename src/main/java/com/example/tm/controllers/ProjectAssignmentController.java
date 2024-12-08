@@ -68,7 +68,7 @@ public class ProjectAssignmentController {
     @DeleteMapping("/delete")
     public ResponseEntity<Boolean> deleteProjectAssignment(@RequestParam UUID projectId, @RequestParam UUID userId, @RequestParam String role) {
         try {
-            if (projectId == null && userId == null && role == null && !role.isEmpty())
+            if (projectId == null || userId == null || role == null || !role.isEmpty())
                 throw new IllegalArgumentException("Delete parameters cannot be null or empty");
             boolean isDeleted = projectAssignmentService.deleteProjectAssignment(projectId,role,userId);
             return ResponseEntity.status(HttpStatus.OK).body(isDeleted);
