@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public record TaskRequestDTO(
@@ -16,5 +17,6 @@ public record TaskRequestDTO(
         LocalDateTime startedAt,
         LocalDateTime completedAt,
         @NotNull
-        UUID projectId
+        UUID projectId,
+        List<UUID> assignees
 ) {}

@@ -1,8 +1,10 @@
 package com.example.tm.dto.Task;
 
+import com.example.tm.dto.AppUser.AppUserMapper;
 import com.example.tm.entities.Task;
 import com.example.tm.enums.Priority.Priority;
 import com.example.tm.enums.Status.Status;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -10,6 +12,12 @@ import java.util.List;
 
 @Service
 public class TaskMapper {
+    private final AppUserMapper appUserMapper;
+
+    @Autowired
+    public TaskMapper(AppUserMapper appUserMapper) {
+        this.appUserMapper = appUserMapper;
+    }
 
     public TaskResponseDTO toDto(Task task){
         return new TaskResponseDTO(
@@ -22,7 +30,8 @@ public class TaskMapper {
                 task.getCompletedAt(),
                 task.getCreatedAt(),
                 task.getLastModifiedAt(),
-                task.getProject().getId()
+                task.getProject().getId(),
+                appUserMapper.toDtos(task.getAssignees())
         );
     }
     public List<TaskResponseDTO> toDtos(List<Task> tasks){

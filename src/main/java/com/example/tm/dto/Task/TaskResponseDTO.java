@@ -1,7 +1,10 @@
 package com.example.tm.dto.Task;
 
 
+import com.example.tm.dto.AppUser.AppUserResponseDTO;
+
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public record TaskResponseDTO(
@@ -14,6 +17,7 @@ public record TaskResponseDTO(
         LocalDateTime completedAt,
         LocalDateTime createdAt,
         LocalDateTime lastModifiedAt,
-        UUID projectId
+        UUID projectId,
+        List<AppUserResponseDTO> assignees
 ) {
 }
