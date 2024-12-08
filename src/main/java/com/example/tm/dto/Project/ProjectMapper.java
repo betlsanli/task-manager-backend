@@ -1,25 +1,43 @@
 package com.example.tm.dto.Project;
-import com.example.tm.entities.AppUser;
 import com.example.tm.entities.Project;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
-import org.mapstruct.Named;
-import org.mapstruct.factory.Mappers;
+import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-@Mapper(componentModel = "spring")
-public interface ProjectMapper {
-    ProjectMapper INSTANCE = Mappers.getMapper(ProjectMapper.class);
+@Service
+public class ProjectMapper {
 
-    ProjectDTO toDto(Project project);
+    public ProjectResponseDTO toDto(Project project){
+        return new ProjectResponseDTO(
+                project.getTitle(),
+                project.getDescription(),
+                project.getCreatedAt(),
+                project.getLastModifiedAt()
+        );
+    }
 
-    @Mappings({
-            @Mapping(target = "createdAt", ignore = true),
-            @Mapping(target = "lastModifiedAt", ignore = true),
-    })
-    Project toEntity(ProjectDTO projectDTO);
+    public List<ProjectResponseDTO> toDtos(List<Project> projects){
+        List<ProjectResponseDTO> dtos = new ArrayList<ProjectResponseDTO>();
+        for(Project project : projects){
+            dtos.add(toDto(project));
+        }
+        return dtos;
+    }
+
+    public Project toEntity(ProjectRequestDTO dto){
+        return Project.builder()
+                .title(dto.title())
+                .description(dto.description())
+                .build();
+    }
+
+    public List<Project> toEntities(List<ProjectRequestDTO> dtos){
+        List<Project> projects = new ArrayList<>();
+        for(ProjectRequestDTO dto : dtos){
+            projects.add(toEntity(dto));
+        }
+        return projects;
+    }
 
 }

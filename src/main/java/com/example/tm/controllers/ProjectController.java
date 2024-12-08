@@ -1,12 +1,9 @@
 package com.example.tm.controllers;
 
-import com.example.tm.dto.request.create.ProjectCreate;
-import com.example.tm.dto.request.update.ProjectUpdate;
-import com.example.tm.entities.AppUser;
-import com.example.tm.entities.Project;
+import com.example.tm.dto.Project.ProjectRequestDTO;
+import com.example.tm.dto.Project.ProjectResponseDTO;
 import com.example.tm.services.AppUserService;
 import com.example.tm.services.ProjectService;
-import com.example.tm.services.create.ProjectCreateService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,17 +25,15 @@ public class ProjectController {
     private final ProjectService projectService;
     private final AppUserService appUserService;
     private static final Logger log = LoggerFactory.getLogger(ProjectController.class);
-    private final ProjectCreateService projectCreateService;
 
     @Autowired
-    public ProjectController(ProjectService projectService, AppUserService appUserService, ProjectCreateService projectCreateService) {
+    public ProjectController(ProjectService projectService, AppUserService appUserService) {
         this.projectService = projectService;
         this.appUserService = appUserService;
-        this.projectCreateService = projectCreateService;
     }
 
     @GetMapping("/all-project")
-    public ResponseEntity<List<Project>> getAllProjects() {
+    public ResponseEntity<List<ProjectResponseDTO>> getAllProjects() {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(projectService.getAll());
         }catch (Exception e) {
@@ -47,27 +42,8 @@ public class ProjectController {
         }
     }
 
-    @GetMapping("/of-user/{userId}")
-    public ResponseEntity<List<Project>> getAllProjectsByUserId(@PathVariable UUID userId) {
-        try {
-            if(userId == null)
-                throw new IllegalArgumentException("User id cannot be null");
-            AppUser user = appUserService.getById(userId);
-            return ResponseEntity.status(HttpStatus.OK).body(projectService.getAllByUser(user));
-        }catch (IllegalArgumentException iae){
-            log.error(iae.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }catch(NoSuchElementException nsee){
-            log.error(nsee.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }catch(Exception ex){
-            log.error(ex.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
     @GetMapping("/{projectId}")
-    public ResponseEntity<Project> getProjectById(@PathVariable UUID projectId) {
+    public ResponseEntity<ProjectResponseDTO> getProjectById(@PathVariable UUID projectId) {
         try {
             if(projectId == null)
                 throw new IllegalArgumentException("Project id cannot be null");
@@ -85,11 +61,11 @@ public class ProjectController {
     }
 
     @PostMapping("/create-project")
-    public ResponseEntity<Project> createProject(@RequestBody @Valid ProjectCreate project) {
+    public ResponseEntity<ProjectResponseDTO> createProject(@RequestBody @Valid ProjectRequestDTO project) {
         try {
             if(project == null)
                 throw new IllegalArgumentException("Project cannot be null");
-            return ResponseEntity.status(HttpStatus.CREATED).body(projectCreateService.createProject(project));
+            return ResponseEntity.status(HttpStatus.CREATED).body(projectService.createProject(project));
         }catch (IllegalArgumentException iae){
             log.error(iae.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -122,11 +98,11 @@ public class ProjectController {
     }
 
     @PutMapping("/edit/{projectId}")
-    public ResponseEntity<Project> updateProject(@PathVariable UUID projectId, @RequestBody @Valid ProjectUpdate project) {
+    public ResponseEntity<ProjectResponseDTO> updateProject(@PathVariable UUID projectId, @RequestBody @Valid ProjectRequestDTO project) {
         try {
             if (projectId == null || project == null)
                 throw new IllegalArgumentException("Project cannot be null");
-            return ResponseEntity.status(HttpStatus.CREATED).body(projectCreateService.updateProject(projectId, project));
+            return ResponseEntity.status(HttpStatus.CREATED).body(projectService.updateProject(projectId, project));
         }catch (IllegalArgumentException iae){
             log.error(iae.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

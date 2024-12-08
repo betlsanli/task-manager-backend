@@ -1,10 +1,8 @@
 package com.example.tm.controllers;
 
-import com.example.tm.dto.request.create.TaskCreate;
-import com.example.tm.dto.request.update.TaskUpdate;
-import com.example.tm.dto.response.TaskResponseDTO;
+import com.example.tm.dto.Task.TaskRequestDTO;
+import com.example.tm.dto.Task.TaskResponseDTO;
 import com.example.tm.services.TaskService;
-import com.example.tm.services.create.TaskCreateService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,14 +22,12 @@ import java.util.UUID;
 public class TaskController {
 
     private final TaskService taskService;
-    private final TaskCreateService taskCreateService;
     private static final Logger log =  LoggerFactory.getLogger(TaskController.class);
 
 
     @Autowired
-    public TaskController(TaskService taskService, TaskCreateService taskCreateService) {
+    public TaskController(TaskService taskService) {
         this.taskService = taskService;
-        this.taskCreateService = taskCreateService;
     }
 
     @GetMapping("/all-task")
@@ -69,7 +65,7 @@ public class TaskController {
         try {
             if(projectId == null)
                 throw new IllegalArgumentException("Project id cannot be null");
-            return ResponseEntity.status(HttpStatus.OK).body(taskService.getAllByTasklist(projectId));
+            return ResponseEntity.status(HttpStatus.OK).body(taskService.getAllByProjectId(projectId));
         }catch (IllegalArgumentException iae){
             log.error(iae.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -101,11 +97,11 @@ public class TaskController {
     }
 
     @PostMapping("/create-task")
-    public ResponseEntity<TaskResponseDTO> createTask(@RequestBody @Valid TaskCreate taskCreate) {
+    public ResponseEntity<TaskResponseDTO> createTask(@RequestBody @Valid TaskRequestDTO taskCreate) {
         try {
             if(taskCreate == null)
                 throw new IllegalArgumentException("TaskCreate cannot be null");
-            return ResponseEntity.status(HttpStatus.CREATED).body(taskCreateService.createTask(taskCreate));
+            return ResponseEntity.status(HttpStatus.CREATED).body(taskService.createTask(taskCreate));
         }catch (IllegalArgumentException iae){
             log.error(iae.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -138,11 +134,11 @@ public class TaskController {
     }
 
     @PutMapping("/edit/{taskId}")
-    public ResponseEntity<TaskResponseDTO> updateTask(@PathVariable UUID taskId, @RequestBody @Valid TaskUpdate taskUpdate) {
+    public ResponseEntity<TaskResponseDTO> updateTask(@PathVariable UUID taskId, @RequestBody @Valid TaskRequestDTO taskUpdate) {
         try {
             if(taskId == null || taskUpdate == null)
                 throw new IllegalArgumentException("Parameters cannot be null");
-            return ResponseEntity.status(HttpStatus.CREATED).body(taskCreateService.updateTask(taskId, taskUpdate));
+            return ResponseEntity.status(HttpStatus.CREATED).body(taskService.updateTask(taskId, taskUpdate));
         }catch (IllegalArgumentException iae){
             log.error(iae.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

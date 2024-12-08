@@ -1,9 +1,13 @@
 package com.example.tm.repositories;
 
+import com.example.tm.entities.AppUser;
 import com.example.tm.entities.Project;
+import com.example.tm.entities.Task;
 import com.example.tm.enums.Priority.Priority;
 import com.example.tm.enums.Status.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,15 +19,19 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
     List<Task> findAllByTitleContainingIgnoreCase(String title);
     List<Task> findAllByDescriptionContainingIgnoreCase(String description);
 
-    List<Task> findAllByParentTaskIsNull();
-
-    List<Task> findAllByBelongsToAndParentTaskIsNull(Project project);
-    List<Task> findAllByBelongsToInAndParentTaskIsNull(List<Project> projects);
-    List<Task> findAllByParentTask(Task parenTask);
-
-
     List<Task> findAllByPriority(Priority priority);
     List<Task> findAllByPriorityAndDueDate(Priority priority, LocalDateTime dueDate);
+
+    @Query("SELECT t FROM Task t WHERE t.project.id = :projectId")
+    List<Task> findTasksByProjectId(@Param("projectId") UUID projectId);
+
+    @Query("SELECT t FROM Task t JOIN t.assignees a WHERE a.id = :userId")
+    List<Task> findTasksByAssigneeId(@Param("userId") UUID userId);
+
+    List<Task> findAllByProject(Project project);
+
+
+    List<Task> findAllByAssigneesContaining(AppUser user);
 
     List<Task> findAllByStatus(Status status);
 

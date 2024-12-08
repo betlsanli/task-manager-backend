@@ -20,7 +20,6 @@ public class AppUser extends  BaseEntity{
     @Column(unique=true, nullable = false,length = 320)
     private String email;
 
-    @JsonIgnore
     @Column(nullable = false)
     private String password;
 

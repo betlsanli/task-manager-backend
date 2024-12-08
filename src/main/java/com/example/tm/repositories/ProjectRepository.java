@@ -12,9 +12,6 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
 
     List<Project> findByTitle(String title);
     List<Project> findAllByTitleContainingIgnoreCase(String title);
-
     List<Project> findAllByDescriptionContainingIgnoreCase(String description);
 
-    List<Project> findAllByUsersContains(AppUser user);
-    Optional<Project> findByTasksContains(Task task);
 }

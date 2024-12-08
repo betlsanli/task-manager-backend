@@ -1,10 +1,8 @@
 package com.example.tm.controllers;
 
-import com.example.tm.dto.request.create.AppUserCreate;
-import com.example.tm.dto.request.update.AppUserUpdate;
-import com.example.tm.entities.AppUser;
+import com.example.tm.dto.AppUser.AppUserRequestDTO;
+import com.example.tm.dto.AppUser.AppUserResponseDTO;
 import com.example.tm.services.AppUserService;
-import com.example.tm.services.create.AppUserCreateService;
 import jakarta.validation.Valid;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -23,17 +21,15 @@ import java.util.UUID;
 @Validated
 public class AppUserController {
     private final AppUserService appUserService;
-    private final AppUserCreateService appUserCreateService;
     private static final Logger log =  LoggerFactory.getLogger(AppUserController.class);
 
     @Autowired
-    public AppUserController(AppUserService appUserService, AppUserCreateService appUserCreateService) {
+    public AppUserController(AppUserService appUserService) {
         this.appUserService = appUserService;
-        this.appUserCreateService = appUserCreateService;
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<AppUser> getUserById(@PathVariable UUID userId) {
+    public ResponseEntity<AppUserResponseDTO> getUserById(@PathVariable UUID userId) {
         try {
             if (userId == null)
                 throw new IllegalArgumentException("User id cannot be null");
@@ -53,7 +49,7 @@ public class AppUserController {
     }
 
     @GetMapping("/all-users")
-    public ResponseEntity<List<AppUser>> getAllUsers() {
+    public ResponseEntity<List<AppUserResponseDTO>> getAllUsers() {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(appUserService.getAll());
         }
@@ -63,30 +59,13 @@ public class AppUserController {
         }
     }
 
-    @GetMapping("/of-project/{projectId}")
-    public ResponseEntity<List<AppUser>> getAllUsersOfProject(@PathVariable UUID projectId){
-        try {
-            if (projectId == null)
-                throw new IllegalArgumentException("List id cannot be null");
-            return ResponseEntity.status(HttpStatus.OK).body(appUserService.getAllByProject(projectId));
-        }catch (IllegalArgumentException iae) {
-            log.error(iae.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }catch (NoSuchElementException nsee) {
-            log.error(nsee.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
 
     @PostMapping("/create-user")
-    public ResponseEntity<AppUser> createUser(@RequestBody @Valid AppUserCreate newUserRequest) {
+    public ResponseEntity<AppUserResponseDTO> createUser(@RequestBody @Valid AppUserRequestDTO newUserRequest) {
         try {
             if (newUserRequest == null)
                 throw new IllegalArgumentException("New user request cannot be null");
-            AppUser createdUser = appUserCreateService.createUser(newUserRequest);
+            AppUserResponseDTO createdUser = appUserService.createUser(newUserRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
         }catch(IllegalArgumentException iae) {
             log.error(iae.getMessage());
@@ -105,7 +84,6 @@ public class AppUserController {
     @DeleteMapping("/delete/{userId}")
     public ResponseEntity<Boolean> deleteUser(@PathVariable UUID userId) {
         try {
-
             if (userId == null)
                 throw new IllegalArgumentException("User id cannot be null");
             boolean isDeleted = appUserService.deleteById(userId);
@@ -124,11 +102,11 @@ public class AppUserController {
     }
 
     @PutMapping("/edit/{userId}")
-    public ResponseEntity<AppUser> updateUser(@PathVariable UUID userId, @RequestBody @Valid AppUserUpdate updateUserRequest) {
+    public ResponseEntity<AppUserResponseDTO> updateUser(@PathVariable UUID userId, @RequestBody @Valid AppUserRequestDTO updateUserRequest) {
         try {
             if (userId == null || updateUserRequest == null)
                 throw new IllegalArgumentException("Parameters cannot be null");
-            return ResponseEntity.status(HttpStatus.CREATED).body(appUserCreateService.updateUser(userId, updateUserRequest));
+            return ResponseEntity.status(HttpStatus.CREATED).body(appUserService.updateUser(userId, updateUserRequest));
         }catch (IllegalArgumentException iae) {
             log.error(iae.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

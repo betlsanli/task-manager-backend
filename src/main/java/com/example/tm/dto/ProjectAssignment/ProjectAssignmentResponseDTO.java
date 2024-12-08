@@ -1,9 +1,12 @@
 package com.example.tm.dto.ProjectAssignment;
 
-import com.example.tm.dto.AppUser.AppUserDTO;
+import com.example.tm.dto.AppUser.AppUserResponseDTO;
+
+import java.util.UUID;
 
 
 public record ProjectAssignmentResponseDTO(
-        AppUserDTO userDto,
+        AppUserResponseDTO userDto,
+        UUID projectId,
         String roleStr
 ) {}
