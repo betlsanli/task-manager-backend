@@ -1,8 +1,8 @@
 package com.example.tm.enums.Role;
 
 public enum Role {
-    ASSIGNEE(1),
-    REVİEWER(2);
+    DEVELOPER(1),
+    MANAGER(2);
 
     private final int value;
 

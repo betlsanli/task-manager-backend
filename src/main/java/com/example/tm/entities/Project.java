@@ -25,38 +25,38 @@ public class Project extends BaseEntity{
     @Column(length = 512)
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "manager_id", nullable = false)
-    private AppUser manager;
-
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(
-            name = "project_user",  // The name of the junction table
-            joinColumns = @JoinColumn(name = "project_id"),  // Foreign key for the Project
-            inverseJoinColumns = @JoinColumn(name = "user_id")  // Foreign key for the AppUser
-    )
-    private List<AppUser> users = new ArrayList<>();
-
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private List<UserTaskProject> assignments = new ArrayList<>();
+    private List<ProjectAssignment> teamMembers = new ArrayList<>();
 
-    @PrePersist
-    private void onCreate() {
-        manager.addManagedProject(this);
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Task> tasks = new ArrayList<>();
+
+    public void addTeamMember(ProjectAssignment teamMember) {
+        if (!teamMembers.contains(teamMember)) {
+            teamMembers.add(teamMember);
+        }
     }
+    public void removeTeamMember(ProjectAssignment teamMember) {
+        if (teamMembers.contains(teamMember)) {
+            teamMembers.remove(teamMember);
+        }
+    }
+    public void addTask(Task task) {
+        if (!tasks.contains(task)) {
+            tasks.add(task);
+        }
+    }
+    public void removeTask(Task task) {
+        if (tasks.contains(task)) {
+            tasks.remove(task);
+        }
+    }
+
     @PreUpdate
-    protected void onUpdate() { // do not forget to remove old in controller
-        manager.addManagedProject(this);
+    protected void onUpdate() {
         this.setLastModifiedAt(LocalDateTime.now());
     }
 
-    public void addAssignment(UserTaskProject assignment) {
-        if(!assignments.contains(assignment))
-            assignments.add(assignment);
-    }
-    public void removeAssignment(UserTaskProject assignment) {
-        if(assignments.contains(assignment))
-            assignments.remove(assignment);
-    }
 }

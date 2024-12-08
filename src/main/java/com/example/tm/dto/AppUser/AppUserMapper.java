@@ -17,9 +17,8 @@ public interface AppUserMapper {
     @Mappings({
             @Mapping(target = "createdAt", ignore = true),
             @Mapping(target = "lastModifiedAt", ignore = true),
-            @Mapping(target = "userId", ignore = true),
     })
     AppUser toEntity(AppUserDTO dto);
 
-    List<AppUserDTO> toDtoList(List<AppUser> appUsers);
+    List<AppUserDTO> toDtos(List<AppUser> appUsers);
 }

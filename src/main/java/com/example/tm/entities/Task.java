@@ -5,6 +5,8 @@ import com.example.tm.enums.Status.Status;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -38,21 +40,31 @@ public class Task extends BaseEntity {
     @Column(insertable = false)
     private LocalDateTime startedAt;
 
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
+    @ManyToOne
+    @JoinColumn(name = "project_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Project project;
+
+    @ManyToMany
+    @JoinTable(
+            name = "task_user",
+            joinColumns = @JoinColumn(name = "task_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
     @Builder.Default
-    private List<UserTaskProject> assignments = new ArrayList<>();
+    private List<AppUser> assignees = new ArrayList<>();
 
+    @PrePersist
+    private void onCreate() {
+        project.addTask(this);
+        for(AppUser assignee : assignees){
+            assignee.addAssignedTask(this);
+        }
+    }
     @PreUpdate
-    public void onUpdate() {
-        this.setLastModifiedAt(LocalDateTime.now());
-    }
-
-    public void addAssignment(UserTaskProject assignment) {
-        if(!assignments.contains(assignment))
-            assignments.add(assignment);
-    }
-    public void removeAssignment(UserTaskProject assignment) {
-        if(assignments.contains(assignment))
-            assignments.remove(assignment);
+    private void onUpdate() {
+        for(AppUser assignee : assignees){
+            assignee.addAssignedTask(this);
+        }
     }
 }

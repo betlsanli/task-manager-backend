@@ -1,22 +1,29 @@
 package com.example.tm.dto.Task;
 
-import com.example.tm.dto.UserTaskProject.TaskAssignmentDTO;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 public record TaskDTO(
-        UUID taskId,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy HH:mm:ss")
         LocalDateTime createdAt,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy HH:mm:ss")
         LocalDateTime lastModifiedAt,
+        @NotEmpty
         String title,
         String description,
-        String priority,
-        String status,
+        String priorityStr,
+        String statusStr,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy HH:mm:ss")
         LocalDateTime dueDate,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy HH:mm:ss")
         LocalDateTime startedAt,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy HH:mm:ss")
         LocalDateTime completedAt,
-        UUID projectId,
-        List<TaskAssignmentDTO> taskAssignments
+        @NotNull
+        UUID projectId
 ) {}

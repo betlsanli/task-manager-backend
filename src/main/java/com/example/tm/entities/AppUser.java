@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -32,39 +30,41 @@ public class AppUser extends  BaseEntity{
     @Column(nullable = false, length = 128)
     private String lastName;
 
-    @OneToMany(mappedBy = "manager")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    @OnDelete(action = OnDeleteAction.RESTRICT)
-    private List<Project> managedProjects = new ArrayList<>();
+    private List<ProjectAssignment> projectAssignments = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "users")
-    private List<Project> projects = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "assignees", fetch = FetchType.LAZY)
     @Builder.Default
-    private List<UserTaskProject> assignments = new ArrayList<>();
+    private List<Task> assignedTasks = new ArrayList<>();
+
 
     @PreUpdate
     public void onUpdate(){
         this.setLastModifiedAt(LocalDateTime.now());
     }
 
-    public void addAssignment(UserTaskProject assignment) {
-        if(!assignments.contains(assignment))
-            assignments.add(assignment);
+    public void addAssignedTask(Task task){
+        if(!this.assignedTasks.contains(task)){
+            this.assignedTasks.add(task);
+        }
     }
-    public void removeAssignment(UserTaskProject assignment) {
-        if(assignments.contains(assignment))
-            assignments.remove(assignment);
-    }
-
-    public void addManagedProject(Project project) {
-        if(!managedProjects.contains(project))
-            managedProjects.add(project);
+    public void removeAssignedTask(Task task){
+        if(this.assignedTasks.contains(task)){
+            this.assignedTasks.remove(task);
+        }
     }
 
-    public void removeManagedProject(Project project) {
-        if(managedProjects.contains(project))
-            managedProjects.remove(project);
+    public void addProjectAssignment(ProjectAssignment projectAssignment){
+        if(!projectAssignments.contains(projectAssignment)){
+            projectAssignments.add(projectAssignment);
+        }
     }
+
+    public void removeProjectAssignment(ProjectAssignment projectAssignment){
+        if(projectAssignments.contains(projectAssignment)){
+            projectAssignments.remove(projectAssignment);
+        }
+    }
+
 }
