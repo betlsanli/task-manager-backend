@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 public record TaskRequestDTO(
-        @NotEmpty
+        @NotEmpty(message = "title cannot be null or empty")
         String title,
         String description,
         String priority,
@@ -16,7 +16,8 @@ public record TaskRequestDTO(
         LocalDateTime dueDate,
         LocalDateTime startedAt,
         LocalDateTime completedAt,
-        @NotNull
+        @NotNull(message = "projectId cannot be null")
         UUID projectId,
+        @NotNull(message = "assignees cannot be null")
         List<UUID> assignees
 ) {}

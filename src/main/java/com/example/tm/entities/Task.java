@@ -55,8 +55,8 @@ public class Task extends BaseEntity {
     private List<AppUser> assignees = new ArrayList<>();
 
     @PrePersist
-    private void onCreate() {
-        project.addTask(this);
+    private void onPersist() {
+        this.project.addTask(this);
         for(AppUser assignee : assignees){
             assignee.addAssignedTask(this);
         }

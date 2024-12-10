@@ -48,7 +48,7 @@ public class ProjectAssignmentController {
     }
 
     @PostMapping("/add-member")
-    public ResponseEntity<ProjectAssignmentResponseDTO> createProject(@RequestBody @Valid ProjectAssignmentRequestDTO projectAssignmentRequestDTO) {
+    public ResponseEntity<ProjectAssignmentResponseDTO> createProjectAssignment(@RequestBody @Valid ProjectAssignmentRequestDTO projectAssignmentRequestDTO) {
         try {
             if(projectAssignmentRequestDTO == null)
                 throw new IllegalArgumentException("Project Assignment DTO cannot be null");

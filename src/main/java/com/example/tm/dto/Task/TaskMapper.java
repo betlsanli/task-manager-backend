@@ -21,6 +21,7 @@ public class TaskMapper {
 
     public TaskResponseDTO toDto(Task task){
         return new TaskResponseDTO(
+                task.getId(),
                 task.getTitle(),
                 task.getDescription(),
                 task.getPriority().toString(),
@@ -46,8 +47,8 @@ public class TaskMapper {
         return Task.builder()
                 .title(dto.title())
                 .description(dto.description())
-                .priority(Priority.valueOf(dto.priority()))
-                .status(Status.valueOf(dto.status()))
+                .priority(dto.priority() != null  ? Priority.valueOf(dto.priority()) : Priority.MEDIUM)
+                .status(dto.status() != null ? Status.valueOf(dto.status()) : Status.TO_DO)
                 .dueDate(dto.dueDate())
                 .startedAt(dto.startedAt())
                 .completedAt(dto.completedAt())

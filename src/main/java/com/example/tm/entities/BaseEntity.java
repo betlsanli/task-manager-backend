@@ -20,7 +20,7 @@ public class BaseEntity {
     private UUID id;
 
     @Builder.Default
-    @Column(updatable = false, nullable = false, insertable = false)
+    @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(insertable = false)

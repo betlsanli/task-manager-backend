@@ -12,8 +12,8 @@ POST http://localhost:8080/project/create-project
 Content-Type: application/json
 
 {
-  "title": "liste 1",
-  "userIds": ["2a31bfdd-fb08-4b14-8788-70bd88182578", "f50e3dad-afe5-409a-8325-4ce6b88f214d", "d04a8042-8335-4553-934d-2173a7f770ac"]
+  "title": "project 1",
+  "description": "this is a description."
 }
 
 ### POST project 2

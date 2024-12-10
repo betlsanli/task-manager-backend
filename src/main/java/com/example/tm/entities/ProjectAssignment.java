@@ -23,11 +23,8 @@ public class ProjectAssignment {
     private Project project;
 
     @Builder.Default
-    @Column(updatable = false, nullable = false, insertable = false)
+    @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column(insertable = false)
-    private LocalDateTime lastModifiedAt;
 
     @PrePersist
     public void onPersist(){
@@ -39,6 +36,5 @@ public class ProjectAssignment {
     public void preUpdate() {
         user.addProjectAssignment(this);
         project.addTeamMember(this);
-        lastModifiedAt = LocalDateTime.now();
     }
 }

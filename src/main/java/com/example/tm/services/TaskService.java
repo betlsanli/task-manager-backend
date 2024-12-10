@@ -71,7 +71,9 @@ public class TaskService {
         if(newTask.assignees() != null || !newTask.assignees().isEmpty()){
             users = appUserRepository.findAllById(newTask.assignees());
         }
+        Project prj = projectRepository.findById(newTask.projectId()).orElseThrow();
         Task toSave = taskMapper.toEntity(newTask);
+        toSave.setProject(prj);
         toSave.setAssignees(users);
         return taskMapper.toDto(taskRepository.save(toSave));
     }

@@ -100,7 +100,7 @@ public class TaskController {
     public ResponseEntity<TaskResponseDTO> createTask(@RequestBody @Valid TaskRequestDTO taskCreate) {
         try {
             if(taskCreate == null)
-                throw new IllegalArgumentException("TaskCreate cannot be null");
+                throw new IllegalArgumentException("Task cannot be null");
             return ResponseEntity.status(HttpStatus.CREATED).body(taskService.createTask(taskCreate));
         }catch (IllegalArgumentException iae){
             log.error(iae.getMessage());

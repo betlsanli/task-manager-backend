@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 public record TaskResponseDTO(
+        UUID id,
         String title,
         String description,
         String priority,

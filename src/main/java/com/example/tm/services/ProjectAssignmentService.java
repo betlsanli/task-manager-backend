@@ -5,7 +5,7 @@ import com.example.tm.dto.ProjectAssignment.ProjectAssignmentRequestDTO;
 import com.example.tm.dto.ProjectAssignment.ProjectAssignmentResponseDTO;
 import com.example.tm.entities.ProjectAssignment;
 import com.example.tm.entities.UserProjectRoleID;
-import com.example.tm.enums.Role.Role;
+import com.example.tm.repositories.AppUserRepository;
 import com.example.tm.repositories.ProjectAssignmentRepository;
 import com.example.tm.repositories.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +17,16 @@ import java.util.UUID;
 @Service
 public class ProjectAssignmentService {
     private final ProjectAssignmentRepository projectAssignmentRepository;
+    private final AppUserRepository appUserRepository;
+    private final ProjectRepository projectRepository;
     private final ProjectAssignmentMapper projectAssignmentMapper;
 
     @Autowired
-    public ProjectAssignmentService(ProjectAssignmentRepository projectAssignmentRepository, ProjectAssignmentMapper projectAssignmentMapper, ProjectAssignmentRepository projectASsignmentRepository) {
+    public ProjectAssignmentService(ProjectAssignmentRepository projectAssignmentRepository, ProjectAssignmentMapper projectAssignmentMapper, ProjectAssignmentRepository projectASsignmentRepository, AppUserRepository appUserRepository, ProjectRepository projectRepository) {
         this.projectAssignmentRepository = projectAssignmentRepository;
         this.projectAssignmentMapper = projectAssignmentMapper;
+        this.appUserRepository = appUserRepository;
+        this.projectRepository = projectRepository;
     }
 
     public List<ProjectAssignmentResponseDTO> getAllProjectAssignmentsByProjectId(UUID projectId) {
@@ -46,6 +50,8 @@ public class ProjectAssignmentService {
 
     public ProjectAssignmentResponseDTO createProjectAssignment(ProjectAssignmentRequestDTO projectAssignmentRequestDTO) {
         ProjectAssignment toSave = projectAssignmentMapper.toEntity(projectAssignmentRequestDTO);
+        toSave.setProject(projectRepository.findById(projectAssignmentRequestDTO.projectId()).orElseThrow());
+        toSave.setUser(appUserRepository.findById(projectAssignmentRequestDTO.userId()).orElseThrow());
         return projectAssignmentMapper.toDto(projectAssignmentRepository.save(toSave));
     }
 

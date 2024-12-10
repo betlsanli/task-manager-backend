@@ -2,6 +2,7 @@ package com.example.tm.dto.Project;
 import com.example.tm.entities.Project;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +11,7 @@ public class ProjectMapper {
 
     public ProjectResponseDTO toDto(Project project){
         return new ProjectResponseDTO(
+                project.getId(),
                 project.getTitle(),
                 project.getDescription(),
                 project.getCreatedAt(),
