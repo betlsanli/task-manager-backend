@@ -66,5 +66,6 @@ public class Task extends BaseEntity {
         for(AppUser assignee : assignees){
             assignee.addAssignedTask(this);
         }
+        this.setLastModifiedAt(LocalDateTime.now());
     }
 }
