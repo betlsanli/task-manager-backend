@@ -5,15 +5,16 @@ import com.example.tm.dto.AppUser.AppUserRequestDTO;
 import com.example.tm.dto.AppUser.LoginRequestDTO;
 import com.example.tm.entities.AppUser;
 import com.example.tm.repositories.AppUserRepository;
+import com.example.tm.security.CustomUserDetails;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -54,14 +55,11 @@ public class AuthController {
         // Set authentication in SecurityContext
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // Get the authenticated user (AppUser from database)
-        AppUser user = userRepository.findByEmail(request.email())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + request.email()));
+        // Store the authenticated user in the session
+        session.setAttribute("user", authentication.getPrincipal());
 
-        session.setAttribute("userId", user.getId());
-        session.setAttribute("email", user.getEmail());
-        session.setAttribute("firstName", user.getFirstName());
-        session.setAttribute("lastName", user.getLastName());
+        System.out.println("Authentication object after login: " + authentication);
+        System.out.println("Authorities: " + authentication.getAuthorities());
 
         return ResponseEntity.ok("Login successful");
     }
@@ -84,4 +82,15 @@ public class AuthController {
 
         return ResponseEntity.ok("Logged out successfully");
     }
+
+    @GetMapping("/check-session")
+    public ResponseEntity<String> checkSession(HttpSession session) {
+        CustomUserDetails user = (CustomUserDetails) session.getAttribute("user");
+        if (user != null) {
+            return ResponseEntity.ok("Session active. User: " + user.getAuthorities());
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Session not found or expired.");
+        }
+    }
+
 }

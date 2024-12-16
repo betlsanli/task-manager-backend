@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +23,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/user")
 @Validated
-public class AppUserController {
+public class AppUserController implements AppUserControllerInt{
     private final AppUserService appUserService;
     private static final Logger log =  LoggerFactory.getLogger(AppUserController.class);
 
@@ -50,7 +52,7 @@ public class AppUserController {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")//allow for admin only
+    //@PreAuthorize("hasRole('ADMIN')")//allow for admin only
     @GetMapping("/all-users")
     public ResponseEntity<List<AppUserResponseDTO>> getAllUsers() {
         try {
@@ -63,40 +65,60 @@ public class AppUserController {
     }
 
     @DeleteMapping("/delete/{userId}")
-    public ResponseEntity<Boolean> deleteUser(@PathVariable UUID userId, HttpSession session) {
+    public ResponseEntity<String> deleteUser(@PathVariable UUID userId, HttpSession session) {
         try {
             if (userId == null)
                 throw new IllegalArgumentException("User id cannot be null");
 
-            if(session == null){
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            // Check if the session is invalid or doesn't contain the userId
+            if (session == null || session.getAttribute("userId") == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Session not found or user not logged in");
             }
+
             // Check if the userId from the path matches the session user's ID
-            if (!session.getAttribute("userId").equals(userId)) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // If IDs don't match, return forbidden
+            UUID sessionUserId = (UUID) session.getAttribute("userId");
+            if (!sessionUserId.equals(userId)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User ID mismatch");
             }
 
             boolean isDeleted = appUserService.deleteById(userId);
-            return ResponseEntity.status(HttpStatus.OK).body(isDeleted);
+            if (isDeleted) {
+                return ResponseEntity.status(HttpStatus.OK).body("User deleted successfully");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            }
 
-        }catch (IllegalArgumentException iae) {
+        } catch (IllegalArgumentException iae) {
             log.error(iae.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
-        }catch (NoSuchElementException nse) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
+        } catch (NoSuchElementException nse) {
             log.error(nse.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(false);
-        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        } catch (Exception e) {
             log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
         }
     }
 
     @PutMapping("/edit/{userId}")
-    public ResponseEntity<AppUserResponseDTO> updateUser(@PathVariable UUID userId, @RequestBody @Valid AppUserRequestDTO updateUserRequest) {
+    public ResponseEntity<AppUserResponseDTO> updateUser(@PathVariable UUID userId, @RequestBody @Valid AppUserRequestDTO updateUserRequest, HttpSession session) {
         try {
             if (userId == null || updateUserRequest == null)
                 throw new IllegalArgumentException("Parameters cannot be null");
+
+            // Check if the session is invalid or doesn't contain the userId
+            if (session == null || session.getAttribute("userId") == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+
+            // Check if the userId from the path matches the session user's ID
+            UUID sessionUserId = (UUID) session.getAttribute("userId");
+            if (!sessionUserId.equals(userId)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
             return ResponseEntity.status(HttpStatus.CREATED).body(appUserService.updateUser(userId, updateUserRequest));
+
         }catch (IllegalArgumentException iae) {
             log.error(iae.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

@@ -8,6 +8,7 @@ import com.example.tm.entities.UserProjectRoleID;
 import com.example.tm.repositories.AppUserRepository;
 import com.example.tm.repositories.ProjectAssignmentRepository;
 import com.example.tm.repositories.ProjectRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,6 +49,7 @@ public class ProjectAssignmentService {
         return true;
     }
 
+    @Transactional
     public ProjectAssignmentResponseDTO createProjectAssignment(ProjectAssignmentRequestDTO projectAssignmentRequestDTO) {
         ProjectAssignment toSave = projectAssignmentMapper.toEntity(projectAssignmentRequestDTO);
         toSave.setProject(projectRepository.findById(projectAssignmentRequestDTO.projectId()).orElseThrow());

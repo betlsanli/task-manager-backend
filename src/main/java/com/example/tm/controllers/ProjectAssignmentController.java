@@ -47,6 +47,7 @@ public class ProjectAssignmentController {
         }
     }
 
+    //manager
     @PostMapping("/add-member")
     public ResponseEntity<ProjectAssignmentResponseDTO> createProjectAssignment(@RequestBody @Valid ProjectAssignmentRequestDTO projectAssignmentRequestDTO) {
         try {
@@ -65,6 +66,7 @@ public class ProjectAssignmentController {
         }
     }
 
+    //manager
     @DeleteMapping("/delete")
     public ResponseEntity<Boolean> deleteProjectAssignment(@RequestParam UUID projectId, @RequestParam UUID userId, @RequestParam String role) {
         try {

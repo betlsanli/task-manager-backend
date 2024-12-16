@@ -9,3 +9,13 @@ spring:
       ddl-auto: create-drop
     database: postgresql
     show-sql: true
+server:
+  servlet:
+    session:
+      timeout: 30m  # Session timeout
+      cookie:
+        name: JSESSIONID  # Name of the session cookie
+        http-only: true  # Make cookie accessible only via HTTP (to improve security)
+        secure: true  # Set to true if you're using HTTPS
+        same-site: STRICT  # Restrict cross-site requests (can be 'Lax' or 'Strict')
+

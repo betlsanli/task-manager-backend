@@ -1,5 +1,8 @@
 ### GET all users
 GET http://localhost:8080/user/all-users
+### check session
+GET http://localhost:8080/auth/check-session
+
 
 ### GET a specific user by id
 GET http://localhost:8080/user/59370a6e-ea63-47f6-8047-08ddb67b40f9
@@ -28,7 +31,6 @@ Content-Type: application/json
   "password": "abc"
 }
 
-
 ### POST new user 2
 POST http://localhost:8080/auth/register
 Content-Type: application/json
@@ -40,6 +42,15 @@ Content-Type: application/json
   "lastName": "savci",
   "isAdmin": true
 
+}
+
+### login user 2
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{
+  "email": "dce@abchelppp.com",
+  "password": "dce"
 }
 
 ### POST new user 3
