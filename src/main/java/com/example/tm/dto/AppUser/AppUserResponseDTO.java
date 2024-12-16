@@ -6,5 +6,6 @@ public record AppUserResponseDTO(
         UUID userId,
         String email,
         String firstName,
-        String lastName
+        String lastName,
+        boolean isAdmin
 ) {}

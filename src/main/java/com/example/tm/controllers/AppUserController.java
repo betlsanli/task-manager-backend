@@ -3,12 +3,14 @@ package com.example.tm.controllers;
 import com.example.tm.dto.AppUser.AppUserRequestDTO;
 import com.example.tm.dto.AppUser.AppUserResponseDTO;
 import com.example.tm.services.AppUserService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,6 +50,7 @@ public class AppUserController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")//allow for admin only
     @GetMapping("/all-users")
     public ResponseEntity<List<AppUserResponseDTO>> getAllUsers() {
         try {
@@ -59,33 +62,20 @@ public class AppUserController {
         }
     }
 
-
-    @PostMapping("/create-user")
-    public ResponseEntity<AppUserResponseDTO> createUser(@RequestBody @Valid AppUserRequestDTO newUserRequest) {
-        try {
-            if (newUserRequest == null)
-                throw new IllegalArgumentException("New user request cannot be null");
-            AppUserResponseDTO createdUser = appUserService.createUser(newUserRequest);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
-        }catch(IllegalArgumentException iae) {
-            log.error(iae.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-        catch (NoSuchElementException nsee) {
-            log.error(nsee.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
     @DeleteMapping("/delete/{userId}")
-    public ResponseEntity<Boolean> deleteUser(@PathVariable UUID userId) {
+    public ResponseEntity<Boolean> deleteUser(@PathVariable UUID userId, HttpSession session) {
         try {
             if (userId == null)
                 throw new IllegalArgumentException("User id cannot be null");
+
+            if(session == null){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            // Check if the userId from the path matches the session user's ID
+            if (!session.getAttribute("userId").equals(userId)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // If IDs don't match, return forbidden
+            }
+
             boolean isDeleted = appUserService.deleteById(userId);
             return ResponseEntity.status(HttpStatus.OK).body(isDeleted);
 

@@ -5,25 +5,41 @@ GET http://localhost:8080/user/all-users
 GET http://localhost:8080/user/59370a6e-ea63-47f6-8047-08ddb67b40f9
 
 ### POST new user 1
-POST http://localhost:8080/user/create-user
+POST http://localhost:8080/auth/register
 Content-Type: application/json
 
 {
   "email": "abc@abc.com",
   "password": "abc",
   "firstName": "ali",
-  "lastName": "budak"
+  "lastName": "budak",
+  "isAdmin": false
 }
+### logout
+POST http://localhost:8080/auth/logout
+Content-Type: application/json
 
-### POST new user 2
-POST http://localhost:8080/user/create-user
+### login
+POST http://localhost:8080/auth/login
 Content-Type: application/json
 
 {
-  "email": "dce@abc.com",
+  "email": "abc@abc.com",
+  "password": "abc"
+}
+
+
+### POST new user 2
+POST http://localhost:8080/auth/register
+Content-Type: application/json
+
+{
+  "email": "dce@abchelppp.com",
   "password": "dce",
   "firstName": "ayse",
-  "lastName": "savci"
+  "lastName": "savci",
+  "isAdmin": true
+
 }
 
 ### POST new user 3

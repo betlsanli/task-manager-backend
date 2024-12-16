@@ -1,5 +1,6 @@
 package com.example.tm.dto.AppUser;
 import com.example.tm.entities.AppUser;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -8,12 +9,19 @@ import java.util.List;
 @Service
 public class AppUserMapper {
 
+    private final PasswordEncoder passwordEncoder;
+
+    public AppUserMapper(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
     public AppUserResponseDTO toDto(AppUser user){
         return new AppUserResponseDTO(
                 user.getId(),
                 user.getEmail(),
                 user.getFirstName(),
-                user.getLastName()
+                user.getLastName(),
+                user.isAdmin()
         );
     }
     public List<AppUserResponseDTO> toDtos(List<AppUser> users){
@@ -27,9 +35,10 @@ public class AppUserMapper {
     public AppUser toEntity(AppUserRequestDTO dto){
         return AppUser.builder()
                 .email(dto.email())
-                .password(dto.password())
+                .password(passwordEncoder.encode(dto.password()))
                 .firstName(dto.firstName())
                 .lastName(dto.lastName())
+                .isAdmin(dto.isAdmin())
                 .build();
     }
 

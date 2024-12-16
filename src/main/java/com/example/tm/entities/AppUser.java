@@ -29,6 +29,9 @@ public class AppUser extends  BaseEntity{
     @Column(nullable = false, length = 128)
     private String lastName;
 
+    @Column(nullable = false, updatable = false)
+    private boolean isAdmin;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<ProjectAssignment> projectAssignments = new ArrayList<>();
