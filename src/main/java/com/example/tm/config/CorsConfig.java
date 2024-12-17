@@ -17,8 +17,8 @@ public class CorsConfig {
         // Allow frontend's origin
         config.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // Adjust according to your frontend URL
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
-        config.setAllowCredentials(true); // Allow cookies (e.g., JSESSIONID)
+        config.setAllowCredentials(true); // Important for cookies
+        config.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config); // Apply CORS configuration to all paths

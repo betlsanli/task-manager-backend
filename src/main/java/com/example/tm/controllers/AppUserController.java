@@ -2,6 +2,7 @@ package com.example.tm.controllers;
 
 import com.example.tm.dto.AppUser.AppUserRequestDTO;
 import com.example.tm.dto.AppUser.AppUserResponseDTO;
+import com.example.tm.security.CustomUserDetails;
 import com.example.tm.services.AppUserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -10,9 +11,6 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +21,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/user")
 @Validated
-public class AppUserController implements AppUserControllerInt{
+public class AppUserController{
     private final AppUserService appUserService;
     private static final Logger log =  LoggerFactory.getLogger(AppUserController.class);
 
@@ -52,11 +50,20 @@ public class AppUserController implements AppUserControllerInt{
         }
     }
 
-    //@PreAuthorize("hasRole('ADMIN')")//allow for admin only
+    //@PreAuthorize("hasAuthority('ROLE_ADMIN')")//allow for admin only
     @GetMapping("/all-users")
-    public ResponseEntity<List<AppUserResponseDTO>> getAllUsers() {
+    //@Secured("ROLE_ADMIN")
+    public ResponseEntity<List<AppUserResponseDTO>> getAllUsers(HttpSession session) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(appUserService.getAll());
+            if (session == null || session.getAttribute("user") == null){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            CustomUserDetails userDetails = (CustomUserDetails) session.getAttribute("user");
+            if (userDetails.hasAuthority("ROLE_ADMIN")) {
+                return ResponseEntity.status(HttpStatus.OK).body(appUserService.getAll());
+            } else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
         }
         catch (Exception e) {
             log.error(e.getMessage());
@@ -70,18 +77,17 @@ public class AppUserController implements AppUserControllerInt{
             if (userId == null)
                 throw new IllegalArgumentException("User id cannot be null");
 
-            // Check if the session is invalid or doesn't contain the userId
-            if (session == null || session.getAttribute("userId") == null) {
+            // Check if the session is invalid or doesn't contain the user
+            CustomUserDetails userDetails = (CustomUserDetails) session.getAttribute("user");
+            if (session == null || session.getAttribute("user") == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Session not found or user not logged in");
             }
-
-            // Check if the userId from the path matches the session user's ID
-            UUID sessionUserId = (UUID) session.getAttribute("userId");
-            if (!sessionUserId.equals(userId)) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User ID mismatch");
+            if (userDetails.getUserId() == null || !userDetails.getUserId().equals(userId)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User id not found or does not match");
             }
 
             boolean isDeleted = appUserService.deleteById(userId);
+
             if (isDeleted) {
                 return ResponseEntity.status(HttpStatus.OK).body("User deleted successfully");
             } else {
@@ -106,14 +112,12 @@ public class AppUserController implements AppUserControllerInt{
             if (userId == null || updateUserRequest == null)
                 throw new IllegalArgumentException("Parameters cannot be null");
 
-            // Check if the session is invalid or doesn't contain the userId
-            if (session == null || session.getAttribute("userId") == null) {
+            // Check if the session is invalid or doesn't contain the user
+            CustomUserDetails userDetails = (CustomUserDetails) session.getAttribute("user");
+            if (session == null || session.getAttribute("user") == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
-
-            // Check if the userId from the path matches the session user's ID
-            UUID sessionUserId = (UUID) session.getAttribute("userId");
-            if (!sessionUserId.equals(userId)) {
+            if (userDetails.getUserId() == null || !userDetails.getUserId().equals(userId)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 

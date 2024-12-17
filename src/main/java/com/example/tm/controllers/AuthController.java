@@ -17,7 +17,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/auth")
@@ -46,10 +45,15 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody LoginRequestDTO request, HttpSession session) {
+    public ResponseEntity<String> loginUser(@RequestBody LoginRequestDTO loginrequest, HttpSession session) {
+
+        if (!userRepository.existsByEmail(loginrequest.email())) {
+            return ResponseEntity.badRequest().body("User does not exist.");
+        }
+
         // Authenticate the user
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.email(), request.password())
+                new UsernamePasswordAuthenticationToken(loginrequest.email(), loginrequest.password())
         );
 
         // Set authentication in SecurityContext
@@ -66,6 +70,7 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<String> logoutUser(HttpSession session, HttpServletResponse response) {
+
         // Invalidate the session to log out
         session.invalidate();
 

@@ -74,4 +74,10 @@ public class CustomUserDetails implements UserDetails {
     public boolean isEnabled() {
         return true; // Set logic for enabling/disabling accounts if required
     }
+
+    public boolean hasAuthority(String str_authority) {
+        if(authorities.stream().anyMatch(authority -> authority.getAuthority().equals(str_authority)))
+            return true;
+        return false;
+    }
 }

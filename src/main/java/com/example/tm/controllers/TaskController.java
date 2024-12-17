@@ -2,7 +2,11 @@ package com.example.tm.controllers;
 
 import com.example.tm.dto.Task.TaskRequestDTO;
 import com.example.tm.dto.Task.TaskResponseDTO;
+import com.example.tm.enums.Role.Role;
+import com.example.tm.security.CustomUserDetails;
+import com.example.tm.services.ProjectAssignmentService;
 import com.example.tm.services.TaskService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,17 +27,30 @@ public class TaskController {
 
     private final TaskService taskService;
     private static final Logger log =  LoggerFactory.getLogger(TaskController.class);
+    private final ProjectAssignmentService projectAssignmentService;
 
 
     @Autowired
-    public TaskController(TaskService taskService) {
+    public TaskController(TaskService taskService, ProjectAssignmentService projectAssignmentService) {
         this.taskService = taskService;
+        this.projectAssignmentService = projectAssignmentService;
     }
 
     @GetMapping("/all-task")
-    public ResponseEntity<List<TaskResponseDTO>> getAllTask() {
+    public ResponseEntity<List<TaskResponseDTO>> getAllTask(HttpSession session) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(taskService.getAll());
+
+            if (session == null || session.getAttribute("user") == null){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            CustomUserDetails userDetails = (CustomUserDetails) session.getAttribute("user");
+
+            if (userDetails.hasAuthority("ROLE_ADMIN")) {
+                return ResponseEntity.status(HttpStatus.OK).body(taskService.getAll());
+            } else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
         }catch (Exception e){
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -41,11 +58,22 @@ public class TaskController {
     }
 
     @GetMapping("/of-user/{userId}")
-    public ResponseEntity<List<TaskResponseDTO>> getAllTaskByUser(@PathVariable UUID userId) {
+    public ResponseEntity<List<TaskResponseDTO>> getAllTaskByUser(@PathVariable UUID userId,HttpSession session) {
         try {
             if(userId == null)
                 throw new IllegalArgumentException("User id cannot be null");
-            return ResponseEntity.status(HttpStatus.OK).body(taskService.getAllByUser(userId));
+
+            if (session == null || session.getAttribute("user") == null){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            CustomUserDetails userDetails = (CustomUserDetails) session.getAttribute("user");
+
+            if (userDetails.hasAuthority("ROLE_ADMIN") || userDetails.getUserId() == userId) {
+                return ResponseEntity.status(HttpStatus.OK).body(taskService.getAllByUser(userId));
+            } else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
         }catch (IllegalArgumentException ie) {
             log.error(ie.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -58,14 +86,23 @@ public class TaskController {
         }
     }
 
-    // duplicate of "/tasklist/{listId}/tasks"
-
     @GetMapping("/of-project/{projectId}")
-    public ResponseEntity<List<TaskResponseDTO>> getAllTaskByProject(@PathVariable UUID projectId) {
+    public ResponseEntity<List<TaskResponseDTO>> getAllTaskByProject(@PathVariable UUID projectId, HttpSession session) {
         try {
             if(projectId == null)
                 throw new IllegalArgumentException("Project id cannot be null");
-            return ResponseEntity.status(HttpStatus.OK).body(taskService.getAllByProjectId(projectId));
+
+            if (session == null || session.getAttribute("user") == null){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            CustomUserDetails userDetails = (CustomUserDetails) session.getAttribute("user");
+
+            if (userDetails.hasAuthority("ROLE_ADMIN") || projectAssignmentService.isProjectAssignedToUser(projectId, userDetails.getUserId())) {
+                return ResponseEntity.status(HttpStatus.OK).body(taskService.getAllByProjectId(projectId));
+            } else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
         }catch (IllegalArgumentException iae){
             log.error(iae.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -79,11 +116,21 @@ public class TaskController {
     }
 
     @GetMapping("/{taskId}")
-    public ResponseEntity<TaskResponseDTO> getTaskById(@PathVariable UUID taskId) {
+    public ResponseEntity<TaskResponseDTO> getTaskById(@PathVariable UUID taskId, HttpSession session) {
         try {
             if(taskId == null)
                 throw new IllegalArgumentException("Task id cannot be null");
-            return ResponseEntity.status(HttpStatus.OK).body(taskService.getById(taskId));
+
+            if (session == null || session.getAttribute("user") == null){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            CustomUserDetails userDetails = (CustomUserDetails) session.getAttribute("user");
+            TaskResponseDTO taskResponseDTO = taskService.getById((taskId));
+            if (userDetails.hasAuthority("ROLE_ADMIN") || projectAssignmentService.isProjectAssignedToUser(taskResponseDTO.projectId(), userDetails.getUserId())) {
+                return ResponseEntity.status(HttpStatus.OK).body(taskResponseDTO);
+            } else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
         }catch (IllegalArgumentException iae){
             log.error(iae.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -97,11 +144,21 @@ public class TaskController {
     }
 
     @PostMapping("/create-task")
-    public ResponseEntity<TaskResponseDTO> createTask(@RequestBody @Valid TaskRequestDTO taskCreate) {
+    public ResponseEntity<TaskResponseDTO> createTask(@RequestBody @Valid TaskRequestDTO taskCreate, HttpSession session) {
         try {
             if(taskCreate == null)
                 throw new IllegalArgumentException("Task cannot be null");
-            return ResponseEntity.status(HttpStatus.CREATED).body(taskService.createTask(taskCreate));
+
+            if (session == null || session.getAttribute("user") == null){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            CustomUserDetails userDetails = (CustomUserDetails) session.getAttribute("user");
+            if (userDetails.hasAuthority("ROLE_ADMIN") || projectAssignmentService.userHasProjectRole(taskCreate.projectId(), userDetails.getUserId(), Role.MANAGER)) {
+                return ResponseEntity.status(HttpStatus.CREATED).body(taskService.createTask(taskCreate));
+            } else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
         }catch (IllegalArgumentException iae){
             log.error(iae.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -115,12 +172,23 @@ public class TaskController {
     }
 
     @DeleteMapping("/delete/{taskId}")
-    public ResponseEntity<Boolean> deleteTask(@PathVariable UUID taskId) {
+    public ResponseEntity<Boolean> deleteTask(@PathVariable UUID taskId, HttpSession session) {
         try {
             if(taskId == null)
                 throw new IllegalArgumentException("Task id cannot be null");
-            boolean isDeleted = taskService.deleteById(taskId);
-            return ResponseEntity.status(HttpStatus.OK).body(isDeleted);
+
+            if (session == null || session.getAttribute("user") == null){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            CustomUserDetails userDetails = (CustomUserDetails) session.getAttribute("user");
+            TaskResponseDTO toDelete = taskService.getById((taskId));
+            if (userDetails.hasAuthority("ROLE_ADMIN") || projectAssignmentService.userHasProjectRole(toDelete.projectId(), userDetails.getUserId(), Role.MANAGER)) {
+                boolean isDeleted = taskService.deleteById(taskId);
+                return ResponseEntity.status(HttpStatus.OK).body(isDeleted);
+            } else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
         }catch (IllegalArgumentException iae){
             log.error(iae.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -134,11 +202,21 @@ public class TaskController {
     }
 
     @PutMapping("/edit/{taskId}")
-    public ResponseEntity<TaskResponseDTO> updateTask(@PathVariable UUID taskId, @RequestBody @Valid TaskRequestDTO taskUpdate) {
+    public ResponseEntity<TaskResponseDTO> updateTask(@PathVariable UUID taskId, @RequestBody @Valid TaskRequestDTO taskUpdate, HttpSession session) {
         try {
             if(taskId == null || taskUpdate == null)
                 throw new IllegalArgumentException("Parameters cannot be null");
-            return ResponseEntity.status(HttpStatus.CREATED).body(taskService.updateTask(taskId, taskUpdate));
+
+            if (session == null || session.getAttribute("user") == null){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            CustomUserDetails userDetails = (CustomUserDetails) session.getAttribute("user");
+            if (userDetails.hasAuthority("ROLE_ADMIN") || projectAssignmentService.isProjectAssignedToUser(taskUpdate.projectId(), userDetails.getUserId())) {
+                return ResponseEntity.status(HttpStatus.CREATED).body(taskService.updateTask(taskId, taskUpdate));
+            } else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
         }catch (IllegalArgumentException iae){
             log.error(iae.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

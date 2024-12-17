@@ -6,7 +6,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     database: postgresql
     show-sql: true
 server:
@@ -17,5 +17,10 @@ server:
         name: JSESSIONID  # Name of the session cookie
         http-only: true  # Make cookie accessible only via HTTP (to improve security)
         secure: true  # Set to true if you're using HTTPS
-        same-site: STRICT  # Restrict cross-site requests (can be 'Lax' or 'Strict')
+        same-site: lax
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
 
