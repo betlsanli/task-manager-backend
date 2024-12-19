@@ -120,17 +120,18 @@ public class AppUserController{
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Session not found or user not logged in");
             }
             CustomUserDetails userDetails = (CustomUserDetails) session.getAttribute("user");
-            if (userDetails.getUserId() == null || !userDetails.getUserId().equals(userId) || !userDetails.hasAuthority("ROLE_ADMIN")) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User id not found or does not match");
+            if (userDetails.getUserId() == null ) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User id not");
             }
-
-            boolean isDeleted = appUserService.deleteById(userId);
-
-            if (isDeleted) {
-                return ResponseEntity.status(HttpStatus.OK).body("User deleted successfully");
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            if(userDetails.getUserId().equals(userId) || userDetails.hasAuthority("ROLE_ADMIN")){
+                boolean isDeleted = appUserService.deleteById(userId);
+                if (isDeleted) {
+                    return ResponseEntity.status(HttpStatus.OK).body("User deleted successfully");
+                } else {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+                }
             }
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User id not");
 
         } catch (IllegalArgumentException iae) {
             log.error(iae.getMessage());
@@ -156,11 +157,16 @@ public class AppUserController{
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
             CustomUserDetails userDetails = (CustomUserDetails) session.getAttribute("user");
-            if (userDetails.getUserId() == null || !userDetails.getUserId().equals(userId) || !userDetails.hasAuthority("ROLE_ADMIN")) {
+
+            if (userDetails.getUserId() == null ) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(appUserService.updateUser(userId, updateUserRequest));
+            if(userDetails.getUserId().equals(userId) || userDetails.hasAuthority("ROLE_ADMIN")){
+                return ResponseEntity.status(HttpStatus.CREATED).body(appUserService.updateUser(userId, updateUserRequest));
+            }
+
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
         }catch (IllegalArgumentException iae) {
             log.error(iae.getMessage());
