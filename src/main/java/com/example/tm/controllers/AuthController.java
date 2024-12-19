@@ -41,7 +41,7 @@ public class AuthController {
         AppUser user = appUserMapper.toEntity(request);
 
         userRepository.save(user);
-        return ResponseEntity.ok("User registered successfully!");
+        return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully!");
     }
 
     @PostMapping("/login")

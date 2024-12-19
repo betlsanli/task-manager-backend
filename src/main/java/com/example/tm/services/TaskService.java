@@ -65,6 +65,10 @@ public class TaskService {
         return true;
     }
 
+    public long getTotalCount() {
+        return taskRepository.count();
+    }
+
     @Transactional
     public TaskResponseDTO createTask(TaskRequestDTO newTask) {
         List<AppUser> users = new ArrayList<>();

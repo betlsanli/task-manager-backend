@@ -1,5 +1,6 @@
 package com.example.tm.dto.AppUser;
 import com.example.tm.entities.AppUser;
+import com.example.tm.security.CustomUserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,15 @@ public class AppUserMapper {
                 user.getFirstName(),
                 user.getLastName(),
                 user.isAdmin()
+        );
+    }
+    public AppUserResponseDTO toDto(CustomUserDetails user){
+        return new AppUserResponseDTO(
+                user.getUserId(),
+                user.getEmail(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.hasAuthority("ROLE_ADMIN") ? true : false
         );
     }
     public List<AppUserResponseDTO> toDtos(List<AppUser> users){

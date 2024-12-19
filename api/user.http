@@ -19,7 +19,7 @@ Content-Type: application/json
   "isAdmin": false
 }
 ### logout
-POST http://localhost:8080/logout
+POST http://localhost:8080/auth/logout
 Content-Type: application/json
 
 ### login
@@ -36,8 +36,8 @@ POST http://localhost:8080/auth/register
 Content-Type: application/json
 
 {
-  "email": "dce@abchelppp.com",
-  "password": "dce",
+  "email": "ayse@gmail.com",
+  "password": "ayse",
   "firstName": "ayse",
   "lastName": "savci",
   "isAdmin": true
@@ -49,8 +49,8 @@ POST http://localhost:8080/auth/login
 Content-Type: application/json
 
 {
-  "email": "dce@abchelppp.com",
-  "password": "dce"
+  "email": "ayse@gmail.com",
+  "password": "ayse"
 }
 
 ### POST new user 3

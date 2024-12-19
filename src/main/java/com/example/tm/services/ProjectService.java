@@ -42,6 +42,10 @@ public class ProjectService {
         return true;
     }
 
+    public long getTotalCount() {
+        return projectRepository.count();
+    }
+
     @Transactional
     public ProjectResponseDTO createProject(ProjectRequestDTO newProject) {
 

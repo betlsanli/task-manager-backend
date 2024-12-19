@@ -12,12 +12,12 @@ spring:
 server:
   servlet:
     session:
-      timeout: 30m  # Session timeout
+      timeout: 60m  # Session timeout
       cookie:
         name: JSESSIONID  # Name of the session cookie
         http-only: true  # Make cookie accessible only via HTTP (to improve security)
         secure: true  # Set to true if you're using HTTPS
-        same-site: lax
+        same-site: none
 logging:
   level:
     org:

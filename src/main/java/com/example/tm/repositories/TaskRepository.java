@@ -46,4 +46,6 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
     List<Task> findAllByStartedAtIsNull();
     List<Task> findAllByStartedAtNotNull();
 
+    long count();
+
 }

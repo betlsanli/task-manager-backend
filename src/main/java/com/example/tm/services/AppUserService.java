@@ -39,6 +39,10 @@ public class AppUserService {
         return appUserMapper.toDtos(users);
     }
 
+    public long getTotalCount() {
+        return appUserRepository.count();
+    }
+
     public boolean deleteById(UUID id) {
         getById(id);
         appUserRepository.deleteById(id);

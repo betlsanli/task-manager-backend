@@ -60,6 +60,24 @@ public class ProjectController {
         }
     }
 
+    @GetMapping("/get-total-count")
+    public ResponseEntity<Long> getTotalCount(HttpSession session) {
+        try {
+            if (session == null || session.getAttribute("user") == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            CustomUserDetails userDetails = (CustomUserDetails) session.getAttribute("user");
+            if (userDetails.hasAuthority("ROLE_ADMIN")) {
+                return ResponseEntity.status(HttpStatus.OK).body(projectService.getTotalCount());
+            }
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     @GetMapping("/{projectId}")
     public ResponseEntity<ProjectResponseDTO> getProjectById(@PathVariable UUID projectId, HttpSession session) {
         try {

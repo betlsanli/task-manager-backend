@@ -17,4 +17,5 @@ public interface AppUserRepository extends JpaRepository<AppUser, UUID> {
     List<AppUser> findAllByLastNameContainingIgnoreCase(String lastName);
     List<AppUser> findAllByFirstNameAndLastName(String firstName, String lastName);
     List<AppUser> findAllByAssignedTasksContaining(Task Task);
+    long count();
 }
