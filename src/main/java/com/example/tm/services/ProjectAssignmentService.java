@@ -61,6 +61,10 @@ public class ProjectAssignmentService {
         return projectAssignmentMapper.toDtos(projectAssignmentRepository.findAll());
     }
 
+    public long getCountByProjectId(UUID projectId) {
+        return projectAssignmentRepository.countAllByProject_Id(projectId);
+    }
+
     public boolean deleteProjectAssignment(UUID projectId, String role, UUID userId) {
 
         ProjectAssignment projectAssignment = projectAssignmentRepository.findById(new UserProjectRoleID(userId, projectId, role)).orElseThrow();

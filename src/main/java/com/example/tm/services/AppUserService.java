@@ -33,6 +33,10 @@ public class AppUserService {
         AppUser user = appUserRepository.findById(id).orElseThrow();
         return appUserMapper.toDto(user);
     }
+    public AppUserResponseDTO getByEmail(String email) {
+        AppUser user = appUserRepository.findByEmail(email).orElseThrow();
+        return appUserMapper.toDto(user);
+    }
 
     public List<AppUserResponseDTO> getAllByIds(List<UUID> ids) {
         List<AppUser> users = appUserRepository.findAllById(ids);

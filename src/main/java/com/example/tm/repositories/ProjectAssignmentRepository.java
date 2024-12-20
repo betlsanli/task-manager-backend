@@ -12,6 +12,7 @@ public interface ProjectAssignmentRepository extends JpaRepository<ProjectAssign
     List<ProjectAssignment> findAllByProject_Id(UUID projectId);
     List<ProjectAssignment> findAllByUser_Id(UUID userId);
     List<ProjectAssignment> findAllByProject_IdAndUser_Id(UUID projectId, UUID userId);
+    long countAllByProject_Id(UUID projectId);
     /*List<ProjectAssignment> findAllByUser_IdAndRole_Id(UUID userId, int RoleId);
     List<ProjectAssignment> findAllByProject_IdAndRole_Id(UUID projectId, int RoleId);
     List<ProjectAssignment> findAllByProject_IdAndRoleAndUser_Id(UUID projectId, Role role, UUID userId);*/

@@ -61,6 +61,26 @@ public class AppUserController{
         }
     }
 
+    @GetMapping("email/{email}")
+    public ResponseEntity<AppUserResponseDTO> getUserById(@PathVariable String email) {
+        try {
+            if (email == null)
+                throw new IllegalArgumentException("User id cannot be null");
+            return ResponseEntity.status(HttpStatus.OK).body(appUserService.getByEmail(email));
+        }catch (IllegalArgumentException iae) {
+            log.error(iae.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+        catch (NoSuchElementException nsee) {
+            log.error(nsee.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     //@PreAuthorize("hasAuthority('ROLE_ADMIN')")//allow for admin only
     @GetMapping("/all-users")
     //@Secured("ROLE_ADMIN")

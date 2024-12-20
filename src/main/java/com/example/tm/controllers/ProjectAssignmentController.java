@@ -60,6 +60,35 @@ public class ProjectAssignmentController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+    @GetMapping("get-count/{projectId}")
+    public ResponseEntity<Long> getCountByProjectId(@PathVariable UUID projectId, HttpSession session) {
+        try {
+            if(projectId == null)
+                throw new IllegalArgumentException("Project id cannot be null");
+
+            if (session == null || session.getAttribute("user") == null){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            CustomUserDetails userDetails = (CustomUserDetails) session.getAttribute("user");
+
+            if (userDetails.hasAuthority("ROLE_ADMIN") || projectAssignmentService.isProjectAssignedToUser(projectId, userDetails.getUserId())) {
+                return ResponseEntity.status(HttpStatus.OK).body(projectAssignmentService.getCountByProjectId(projectId));
+            } else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
+        }catch (IllegalArgumentException iae){
+            log.error(iae.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }catch(NoSuchElementException nsee){
+            log.error(nsee.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }catch(Exception ex){
+            log.error(ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 
     @GetMapping("get-role/{projectId}")
     public ResponseEntity<List<String>> getRolesOfUserInProject(@PathVariable UUID projectId, HttpSession session) {
@@ -126,7 +155,7 @@ public class ProjectAssignmentController {
     @DeleteMapping("/delete")
     public ResponseEntity<Boolean> deleteProjectAssignment(@RequestParam UUID projectId, @RequestParam UUID userId, @RequestParam String role, HttpSession session) {
         try {
-            if (projectId == null || userId == null || role == null || !role.isEmpty())
+            if (projectId == null || userId == null || role == null || role.isEmpty())
                 throw new IllegalArgumentException("Delete parameters cannot be null or empty");
 
             if (session == null || session.getAttribute("user") == null){
