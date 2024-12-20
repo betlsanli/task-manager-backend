@@ -3,6 +3,9 @@ package com.example.tm.controllers;
 import com.example.tm.dto.AppUser.AppUserMapper;
 import com.example.tm.dto.AppUser.AppUserRequestDTO;
 import com.example.tm.dto.AppUser.AppUserResponseDTO;
+import com.example.tm.dto.AppUser.ResetPasswordRequest;
+import com.example.tm.entities.AppUser;
+import com.example.tm.repositories.AppUserRepository;
 import com.example.tm.security.CustomUserDetails;
 import com.example.tm.services.AppUserService;
 import jakarta.servlet.http.HttpSession;
@@ -12,6 +15,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,11 +30,15 @@ public class AppUserController{
     private final AppUserService appUserService;
     private static final Logger log =  LoggerFactory.getLogger(AppUserController.class);
     private final AppUserMapper appUserMapper;
+    private final AppUserRepository appUserRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AppUserController(AppUserService appUserService, AppUserMapper appUserMapper) {
+    public AppUserController(AppUserService appUserService, AppUserMapper appUserMapper, AppUserRepository appUserRepository, PasswordEncoder passwordEncoder) {
         this.appUserService = appUserService;
         this.appUserMapper = appUserMapper;
+        this.appUserRepository = appUserRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/{userId}")
@@ -163,6 +171,9 @@ public class AppUserController{
             }
 
             if(userDetails.getUserId().equals(userId) || userDetails.hasAuthority("ROLE_ADMIN")){
+                if (!passwordEncoder.matches(updateUserRequest.password(), userDetails.getPassword())) {
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+                }
                 return ResponseEntity.status(HttpStatus.CREATED).body(appUserService.updateUser(userId, updateUserRequest));
             }
 
@@ -180,5 +191,26 @@ public class AppUserController{
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @PutMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
+        try{
+            AppUser user = appUserRepository.findById(request.userId()).orElseThrow();
+
+            if (!passwordEncoder.matches(request.currentPassword(), user.getPassword())) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Current password is incorrect.");
+            }
+
+            user.setPassword(passwordEncoder.encode(request.newPassword()));
+            appUserRepository.save(user);
+
+            return ResponseEntity.ok("Password reset successfully!");
+        }
+        catch (Exception e){
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 
 }
