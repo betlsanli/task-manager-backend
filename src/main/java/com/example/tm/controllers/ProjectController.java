@@ -2,6 +2,8 @@ package com.example.tm.controllers;
 
 import com.example.tm.dto.Project.ProjectRequestDTO;
 import com.example.tm.dto.Project.ProjectResponseDTO;
+import com.example.tm.dto.Project.ProjectTaskPriorityCountDTO;
+import com.example.tm.dto.Project.ProjectTaskStatusCountDTO;
 import com.example.tm.dto.ProjectAssignment.ProjectAssignmentResponseDTO;
 import com.example.tm.enums.Role.Role;
 import com.example.tm.security.CustomUserDetails;

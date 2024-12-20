@@ -1,5 +1,7 @@
 package com.example.tm.repositories;
 
+import com.example.tm.dto.Project.ProjectTaskPriorityCountDTO;
+import com.example.tm.dto.Project.ProjectTaskStatusCountDTO;
 import com.example.tm.entities.AppUser;
 import com.example.tm.entities.Project;
 import com.example.tm.entities.Task;
@@ -47,5 +49,19 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
     List<Task> findAllByStartedAtNotNull();
 
     long count();
+
+    long countAllByProjectId(UUID projectId);
+
+    @Query("SELECT new com.example.tm.dto.Project.ProjectTaskStatusCountDTO(t.status, COUNT(t)) " +
+            "FROM Task t " +
+            "WHERE t.project.id = :projectId " +
+            "GROUP BY t.status")
+    List<ProjectTaskStatusCountDTO> findTaskCountByProjectIdGroupedByStatus(UUID projectId);
+
+    @Query("SELECT new com.example.tm.dto.Project.ProjectTaskPriorityCountDTO(t.priority, COUNT(t)) " +
+            "FROM Task t " +
+            "WHERE t.project.id = :projectId " +
+            "GROUP BY t.priority")
+    List<ProjectTaskPriorityCountDTO> findTaskCountByProjectIdGroupedByPriority(UUID projectId);
 
 }

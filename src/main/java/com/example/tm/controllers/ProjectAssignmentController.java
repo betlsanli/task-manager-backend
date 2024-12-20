@@ -62,7 +62,7 @@ public class ProjectAssignmentController {
     }
 
     @GetMapping("get-role/{projectId}")
-    public ResponseEntity<List<String>> getRolesOfUSerInProject(@PathVariable UUID projectId, HttpSession session) {
+    public ResponseEntity<List<String>> getRolesOfUserInProject(@PathVariable UUID projectId, HttpSession session) {
         try {
             if(projectId == null)
                 throw new IllegalArgumentException("Project id cannot be null");

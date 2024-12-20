@@ -2,6 +2,8 @@ package com.example.tm.services;
 
 
 import com.example.tm.dto.AppUser.AppUserMapper;
+import com.example.tm.dto.Project.ProjectTaskPriorityCountDTO;
+import com.example.tm.dto.Project.ProjectTaskStatusCountDTO;
 import com.example.tm.dto.Task.TaskRequestDTO;
 import com.example.tm.dto.Task.TaskMapper;
 import com.example.tm.dto.Task.TaskResponseDTO;
@@ -67,6 +69,17 @@ public class TaskService {
 
     public long getTotalCount() {
         return taskRepository.count();
+    }
+    public long getTotalCountByProjectId(UUID projectId) {
+        return taskRepository.countAllByProjectId(projectId);
+    }
+
+    public List<ProjectTaskStatusCountDTO> getTaskStatusCount(UUID projectId) {
+        return taskRepository.findTaskCountByProjectIdGroupedByStatus(projectId);
+    }
+
+    public List<ProjectTaskPriorityCountDTO> getTaskPriorityCount(UUID projectId) {
+        return taskRepository.findTaskCountByProjectIdGroupedByPriority(projectId);
     }
 
     @Transactional

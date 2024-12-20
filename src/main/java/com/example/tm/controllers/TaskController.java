@@ -1,5 +1,7 @@
 package com.example.tm.controllers;
 
+import com.example.tm.dto.Project.ProjectTaskPriorityCountDTO;
+import com.example.tm.dto.Project.ProjectTaskStatusCountDTO;
 import com.example.tm.dto.Task.TaskRequestDTO;
 import com.example.tm.dto.Task.TaskResponseDTO;
 import com.example.tm.enums.Role.Role;
@@ -66,6 +68,24 @@ public class TaskController {
             CustomUserDetails userDetails = (CustomUserDetails) session.getAttribute("user");
             if (userDetails.hasAuthority("ROLE_ADMIN")) {
                 return ResponseEntity.status(HttpStatus.OK).body(taskService.getTotalCount());
+            }
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/get-total-count/{projectId}")
+    public ResponseEntity<Long> getTotalCountByProjectId(@PathVariable UUID projectId, HttpSession session) {
+        try {
+            if (session == null || session.getAttribute("user") == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            CustomUserDetails userDetails = (CustomUserDetails) session.getAttribute("user");
+            if (userDetails.hasAuthority("ROLE_ADMIN") || projectAssignmentService.isProjectAssignedToUser(projectId, userDetails.getUserId())) {
+                return ResponseEntity.status(HttpStatus.OK).body(taskService.getTotalCountByProjectId(projectId));
             }
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -157,6 +177,69 @@ public class TaskController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }catch (Exception e){
             log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("status-stats/{projectId}")
+    public ResponseEntity<List<ProjectTaskStatusCountDTO>> getProjectStatusStats(@PathVariable UUID projectId, HttpSession session) {
+        try {
+            if(projectId == null)
+                throw new IllegalArgumentException("Project id cannot be null");
+
+            if (session == null || session.getAttribute("user") == null){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            CustomUserDetails userDetails = (CustomUserDetails) session.getAttribute("user");
+            if (userDetails.hasAuthority("ROLE_ADMIN")) {
+                return ResponseEntity.status(HttpStatus.OK).body(taskService.getTaskStatusCount(projectId));
+            } else {
+                //for normal users, check if assigned
+                if(projectAssignmentService.isProjectAssignedToUser(projectId, userDetails.getUserId())){
+                    return ResponseEntity.status(HttpStatus.OK).body(taskService.getTaskStatusCount(projectId));
+                }
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
+        }catch (IllegalArgumentException iae){
+            log.error(iae.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }catch(NoSuchElementException nsee){
+            log.error(nsee.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }catch(Exception ex){
+            log.error(ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    @GetMapping("priority-stats/{projectId}")
+    public ResponseEntity<List<ProjectTaskPriorityCountDTO>> getProjectPriorityStats(@PathVariable UUID projectId, HttpSession session) {
+        try {
+            if(projectId == null)
+                throw new IllegalArgumentException("Project id cannot be null");
+
+            if (session == null || session.getAttribute("user") == null){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            CustomUserDetails userDetails = (CustomUserDetails) session.getAttribute("user");
+            if (userDetails.hasAuthority("ROLE_ADMIN")) {
+                return ResponseEntity.status(HttpStatus.OK).body(taskService.getTaskPriorityCount(projectId));
+            } else {
+                //for normal users, check if assigned
+                if(projectAssignmentService.isProjectAssignedToUser(projectId, userDetails.getUserId())){
+                    return ResponseEntity.status(HttpStatus.OK).body(taskService.getTaskPriorityCount(projectId));
+                }
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
+        }catch (IllegalArgumentException iae){
+            log.error(iae.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }catch(NoSuchElementException nsee){
+            log.error(nsee.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }catch(Exception ex){
+            log.error(ex.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

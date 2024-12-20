@@ -1,10 +1,9 @@
 package com.example.tm.services;
 
-import com.example.tm.dto.Project.ProjectRequestDTO;
-import com.example.tm.dto.Project.ProjectMapper;
-import com.example.tm.dto.Project.ProjectResponseDTO;
+import com.example.tm.dto.Project.*;
 import com.example.tm.entities.Project;
 import com.example.tm.repositories.ProjectRepository;
+import com.example.tm.repositories.TaskRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +15,7 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final ProjectMapper projectMapper;
+
     //private static final Logger log = LoggerFactory.getLogger(ProjectService.class);
 
     @Autowired
@@ -55,11 +55,12 @@ public class ProjectService {
     @Transactional
     public ProjectResponseDTO updateProject(UUID projectId, ProjectRequestDTO updatedProject) {
 
-       // Project oldProject = projectRepository.findById(projectId).orElseThrow();
+        Project oldProject = projectRepository.findById(projectId).orElseThrow();
 
         Project newProject = projectMapper.toEntity(updatedProject);
-        newProject.setId(projectId);
+        oldProject.setTitle(newProject.getTitle());
+        oldProject.setDescription(newProject.getDescription());
 
-        return projectMapper.toDto(projectRepository.save(newProject));
+        return projectMapper.toDto(projectRepository.save(oldProject));
     }
 }
