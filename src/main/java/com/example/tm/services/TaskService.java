@@ -74,7 +74,8 @@ public class TaskService {
         return taskRepository.countAllByProjectId(projectId);
     }
     public long getTotalCountByUserId(UUID userId) {
-        return taskRepository.countAllByUserId(userId);
+        AppUser user = appUserRepository.findById(userId).orElseThrow();
+        return taskRepository.countAllByAssigneesContaining(user);
     }
 
     public List<ProjectTaskStatusCountDTO> getTaskStatusCount(UUID projectId) {
