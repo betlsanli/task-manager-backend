@@ -1,5 +1,6 @@
 package com.example.tm.dto.Task;
 
+import com.example.tm.dto.AppUser.AppUserResponseDTO;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
@@ -19,5 +20,5 @@ public record TaskRequestDTO(
         @NotNull(message = "projectId cannot be null")
         UUID projectId,
         @NotNull(message = "assignees cannot be null")
-        List<UUID> assignees
+        List<AppUserResponseDTO> assignees
 ) {}

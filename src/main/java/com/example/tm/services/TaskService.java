@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskService {
@@ -90,7 +91,11 @@ public class TaskService {
     public TaskResponseDTO createTask(TaskRequestDTO newTask) {
         List<AppUser> users = new ArrayList<>();
         if(newTask.assignees() != null || !newTask.assignees().isEmpty()){
-            users = appUserRepository.findAllById(newTask.assignees());
+            List<UUID> assigneeIds = newTask.assignees().stream()
+                    .map(user -> user.userId()) // Assuming getUserID() gives the user ID from the AppUserDTO
+                    .collect(Collectors.toList());
+
+            users = appUserRepository.findAllById(assigneeIds);
         }
         Project prj = projectRepository.findById(newTask.projectId()).orElseThrow();
         Task toSave = taskMapper.toEntity(newTask);
@@ -103,7 +108,11 @@ public class TaskService {
     public TaskResponseDTO updateTask(UUID taskId, TaskRequestDTO updatedTask) {
         Task oldTask = taskRepository.findById(taskId).orElseThrow();
         List<AppUser> oldAssignees = oldTask.getAssignees();
-        List<AppUser> newAssignees = appUserRepository.findAllById(updatedTask.assignees());
+        List<UUID> assigneeIds = updatedTask.assignees().stream()
+                .map(user -> user.userId()) // Assuming getUserID() gives the user ID from the AppUserDTO
+                .collect(Collectors.toList());
+
+        List<AppUser> newAssignees = appUserRepository.findAllById(assigneeIds);
         Project prj = projectRepository.findById(updatedTask.projectId()).orElseThrow();
 
         Task toSave = taskMapper.toEntity(updatedTask);
