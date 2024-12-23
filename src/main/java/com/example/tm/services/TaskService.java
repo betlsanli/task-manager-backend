@@ -109,6 +109,7 @@ public class TaskService {
         Task toSave = taskMapper.toEntity(updatedTask);
         toSave.setId(taskId);
         toSave.setProject(prj);
+        toSave.setAssignees(newAssignees);
         handleAssigneeUpdate(oldAssignees,newAssignees,oldTask);
 
         return taskMapper.toDto(taskRepository.save(toSave));
