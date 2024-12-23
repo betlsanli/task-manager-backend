@@ -106,7 +106,7 @@ public class TaskController {
             }
             CustomUserDetails userDetails = (CustomUserDetails) session.getAttribute("user");
 
-            if (userDetails.hasAuthority("ROLE_ADMIN") || userDetails.getUserId() == userId) {
+            if (userDetails.hasAuthority("ROLE_ADMIN") || userDetails.getUserId().equals(userId)) {
                 return ResponseEntity.status(HttpStatus.OK).body(taskService.getAllByUser(userId));
             } else {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
