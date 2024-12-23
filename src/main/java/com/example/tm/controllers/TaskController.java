@@ -69,7 +69,7 @@ public class TaskController {
             if (userDetails.hasAuthority("ROLE_ADMIN")) {
                 return ResponseEntity.status(HttpStatus.OK).body(taskService.getTotalCount());
             }
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            return ResponseEntity.status(HttpStatus.OK).body(taskService.getTotalCountByUserId(userDetails.getUserId()));
         }
         catch (Exception e) {
             log.error(e.getMessage());
@@ -87,7 +87,7 @@ public class TaskController {
             if (userDetails.hasAuthority("ROLE_ADMIN") || projectAssignmentService.isProjectAssignedToUser(projectId, userDetails.getUserId())) {
                 return ResponseEntity.status(HttpStatus.OK).body(taskService.getTotalCountByProjectId(projectId));
             }
-            return ResponseEntity.status(HttpStatus.OK).body(taskService.getTotalCountByUserId(userDetails.getUserId()));
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         catch (Exception e) {
             log.error(e.getMessage());
