@@ -52,6 +52,8 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
 
     long countAllByProjectId(UUID projectId);
 
+    long countAllByUserId(UUID id);
+
     @Query("SELECT new com.example.tm.dto.Project.ProjectTaskStatusCountDTO(t.status, COUNT(t)) " +
             "FROM Task t " +
             "WHERE t.project.id = :projectId " +
